@@ -961,3 +961,181 @@ html { scroll-behavior: smooth; }
         transform: translateY(0);
     }
 }
+
+/* Lost & Found Page Styles */
+.lost-found-page {
+    background: var(--background-color);
+    min-height: 100vh;
+}
+
+/* Navbar integration */
+.lost-found-page .navbar {
+    z-index: 1030;
+}
+
+.lost-found-page main {
+    padding: 2rem 1rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Item cards */
+.lost-found-page .item-card {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.lost-found-page .item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.lost-found-page .item-image {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.lost-found-page .item-card:hover .item-image {
+    transform: scale(1.05);
+}
+
+.lost-found-page .item-image-placeholder {
+    height: 200px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.lost-found-page .card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+}
+
+.lost-found-page .card-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--muted);
+}
+
+.lost-found-page .badge {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+}
+
+/* Filter section */
+.lost-found-page .card.bg-light {
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.lost-found-page .form-label {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.lost-found-page .form-control,
+.lost-found-page .form-select {
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.lost-found-page .form-control:focus,
+.lost-found-page .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(75, 0, 130, 0.25);
+}
+
+/* Quick action button */
+.lost-found-page .btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.lost-found-page .btn-success:hover {
+    background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+/* Modal styles */
+.lost-found-page .modal-content {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.lost-found-page .modal-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.lost-found-page .modal-title {
+    font-weight: 600;
+}
+
+/* Toast notifications */
+.lost-found-page .toast {
+    z-index: 1060;
+}
+
+.lost-found-page .toast .toast-body {
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .lost-found-page main {
+        padding: 1rem 0.5rem;
+    }
+    
+    .lost-found-page .display-4 {
+        font-size: 2rem;
+    }
+    
+    .lost-found-page .lead {
+        font-size: 1rem;
+    }
+    
+    .lost-found-page .btn-success {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .lost-found-page .item-card {
+        margin-bottom: 1rem;
+    }
+    
+    .lost-found-page .card-title {
+        font-size: 1rem;
+    }
+    
+    .lost-found-page .card-text {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .lost-found-page .display-4 {
+        font-size: 1.75rem;
+    }
+    
+    .lost-found-page .lead {
+        font-size: 0.9rem;
+    }
+    
+    .lost-found-page .btn-success {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+    }
+    
+    .lost-found-page .item-image,
+    .lost-found-page .item-image-placeholder {
+        height: 150px;
+    }
+}

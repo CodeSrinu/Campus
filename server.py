@@ -93,6 +93,10 @@ events = [
 ]
 next_event_id = 7
 
+# Lost & Found data
+lost_found_items = []
+next_item_id = 1
+
 # Cafeteria data and user reporting system
 cafeteria_data = {
     'main_cafeteria': {
@@ -636,6 +640,91 @@ def create_app() -> Flask:
             'success': True,
             'data': cafeteria_data
         })
+
+    # -----------------------------
+    # Lost & Found Routes
+    # -----------------------------
+    
+    # Serve Lost & Found page at /lost-found
+    @app.route("/lost-found", methods=["GET"])
+    def lost_found_page():
+        return send_from_directory("templates", "lost_found.html")
+
+    # Get all lost and found items
+    @app.route("/api/lost-found/items")
+    def get_lost_found_items():
+        return jsonify({
+            'success': True,
+            'data': lost_found_items
+        })
+
+    # Report a new lost or found item
+    @app.route("/api/lost-found/report", methods=["POST"])
+    def report_lost_found_item():
+        global next_item_id
+        
+        try:
+            data = request.get_json()
+            
+            new_item = {
+                'id': next_item_id,
+                'title': data.get('title'),
+                'description': data.get('description'),
+                'category': data.get('category'),
+                'item_type': data.get('item_type'),  # 'lost' or 'found'
+                'location': data.get('location'),
+                'contact_method': data.get('contact_method'),
+                'contact_info': data.get('contact_info', ''),
+                'image_url': data.get('image_url', ''),
+                'status': 'active',
+                'created_at': datetime.now().strftime('%Y-%m-%d %H:%M'),
+                'user_id': data.get('user_id', 'anonymous')
+            }
+            
+            lost_found_items.append(new_item)
+            next_item_id += 1
+            
+            return jsonify({
+                'success': True,
+                'message': 'Item reported successfully!',
+                'item': new_item
+            })
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'message': str(e)
+            }), 400
+
+    # Get a specific lost or found item
+    @app.route("/api/lost-found/items/<int:item_id>")
+    def get_lost_found_item(item_id):
+        item = next((item for item in lost_found_items if item['id'] == item_id), None)
+        if item:
+            return jsonify({
+                'success': True,
+                'data': item
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'Item not found'
+            }), 404
+
+    # Resolve a lost or found item
+    @app.route("/api/lost-found/items/<int:item_id>/resolve", methods=["POST"])
+    def resolve_lost_found_item(item_id):
+        item = next((item for item in lost_found_items if item['id'] == item_id), None)
+        if item:
+            item['status'] = 'resolved'
+            return jsonify({
+                'success': True,
+                'message': 'Item marked as resolved!'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'Item not found'
+            }), 404
 
     # Helper functions for cafeteria
     def get_user_badge(report_count):

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found - Smart Campus App</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Bootstrap CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="lost-found-page">
+    <!-- Fixed Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top border-bottom app-navbar" id="top">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+                <i class="bi bi-mortarboard-fill icon-primary"></i>
+                <span class="fw-semibold">Smart Campus App</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link requires-auth" href="/map"><i class="bi bi-geo-alt me-1"></i>Navigation</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/events"><i class="bi bi-calendar-event me-1"></i>Events</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/lost-found"><i class="bi bi-search me-1"></i>Lost & Found</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/cafeteria"><i class="bi bi-cup-hot me-1"></i>Cafeteria</a></li>
+                </ul>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
+                        <i class="bi bi-person-plus-fill me-1"></i>Register
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="mt-5 pt-4">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h1 class="display-4 text-center mb-3">
+                        <i class="bi bi-search text-primary"></i> Lost & Found
+                    </h1>
+                    <p class="lead text-center text-muted">
+                        Find your lost items or help others by reporting found items
+                    </p>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <form id="filterForm" class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label" for="typeFilter">Type</label>
+                                    <select name="type" id="typeFilter" class="form-select">
+                                        <option value="all">All Items</option>
+                                        <option value="lost">Lost Items</option>
+                                        <option value="found">Found Items</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label" for="categoryFilter">Category</label>
+                                    <select name="category" id="categoryFilter" class="form-select">
+                                        <option value="all">All Categories</option>
+                                        <option value="electronics">Electronics</option>
+                                        <option value="books">Books & Stationery</option>
+                                        <option value="clothing">Clothing</option>
+                                        <option value="accessories">Accessories</option>
+                                        <option value="documents">Documents</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label" for="searchInput">Search</label>
+                                    <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search items...">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">&nbsp;</label>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-search"></i> Filter
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Action Button -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-grid d-md-block">
+                        <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#reportItemModal">
+                            <i class="bi bi-plus-circle"></i> Report Lost/Found Item
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items Grid -->
+            <div class="row g-4" id="itemsContainer">
+                <!-- Items will be loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Report Item Modal -->
+    <div class="modal fade" id="reportItemModal" tabindex="-1" aria-labelledby="reportItemLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportItemLabel">
+                        <i class="bi bi-plus-circle me-2"></i>Report Lost/Found Item
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reportItemForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="itemTitle">Title *</label>
+                                <input type="text" class="form-control" id="itemTitle" name="title" required placeholder="e.g., Lost iPhone, Found Keys">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="itemType">Type *</label>
+                                <select class="form-select" id="itemType" name="item_type" required>
+                                    <option value="">Select type...</option>
+                                    <option value="lost">Lost Item</option>
+                                    <option value="found">Found Item</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="itemCategory">Category *</label>
+                                <select class="form-select" id="itemCategory" name="category" required>
+                                    <option value="">Select category...</option>
+                                    <option value="electronics">Electronics</option>
+                                    <option value="books">Books & Stationery</option>
+                                    <option value="clothing">Clothing</option>
+                                    <option value="accessories">Accessories</option>
+                                    <option value="documents">Documents</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="itemLocation">Location *</label>
+                                <input type="text" class="form-control" id="itemLocation" name="location" required placeholder="e.g., Main Block, Library, Cafeteria">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="itemDescription">Description *</label>
+                            <textarea class="form-control" id="itemDescription" name="description" rows="3" required placeholder="Describe the item in detail..."></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="contactMethod">Contact Method *</label>
+                                <select class="form-select" id="contactMethod" name="contact_method" required>
+                                    <option value="">Select method...</option>
+                                    <option value="email">Email</option>
+                                    <option value="anonymous">Anonymous</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="contactInfo">Contact Info</label>
+                                <input type="text" class="form-control" id="contactInfo" name="contact_info" placeholder="Email address (if not anonymous)">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="itemImage">Image (Optional)</label>
+                            <input type="file" class="form-control" id="itemImage" name="image" accept="image/*">
+                            <small class="text-muted">Upload an image to help identify the item</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submitReportBtn">
+                        <i class="bi bi-upload"></i> Submit Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Item Detail Modal -->
+    <div class="modal fade" id="itemDetailModal" tabindex="-1" aria-labelledby="itemDetailLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="itemDetailLabel">Item Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="itemDetailContent">
+                    <!-- Item details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="resolveItemBtn" style="display: none;">
+                        <i class="bi bi-check-circle"></i> Mark as Resolved
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginLabel"><i class="bi bi-box-arrow-in-right me-2"></i>Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="form-label" for="loginRollNumber">Register Number</label>
+                            <input type="text" class="form-control" id="loginRollNumber" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="loginPassword">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="loginBtn">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registerLabel"><i class="bi bi-person-plus-fill me-2"></i>Register</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label class="form-label" for="registerRollNumber">Register Number</label>
+                            <input type="text" class="form-control" id="registerRollNumber" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label" for="registerYear">Year</label>
+                                <select class="form-select" id="registerYear" required>
+                                    <option value="" selected disabled>Choose…</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                </select>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label" for="registerBranch">Branch</label>
+                                <select class="form-select" id="registerBranch" required>
+                                    <option value="" selected disabled>Choose…</option>
+                                    <option>CSE</option>
+                                    <option>ECE</option>
+                                    <option>EEE</option>
+                                    <option>ME</option>
+                                    <option>CE</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="registerPassword">Password</label>
+                            <input type="password" class="form-control" id="registerPassword" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="createAccountBtn">Create Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <script>
+        // Lost & Found Management JavaScript
+        let currentItems = [];
+        let currentFilters = {
+            type: 'all',
+            category: 'all',
+            search: ''
+        };
+
+        // DOM Elements
+        const itemsContainer = document.getElementById('itemsContainer');
+        const filterForm = document.getElementById('filterForm');
+        const typeFilter = document.getElementById('typeFilter');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const searchInput = document.getElementById('searchInput');
+        const submitReportBtn = document.getElementById('submitReportBtn');
+        const reportItemForm = document.getElementById('reportItemForm');
+        const resolveItemBtn = document.getElementById('resolveItemBtn');
+
+        // Event Listeners
+        filterForm.addEventListener('submit', handleFilterSubmit);
+        typeFilter.addEventListener('change', handleFilterChange);
+        categoryFilter.addEventListener('change', handleFilterChange);
+        searchInput.addEventListener('input', handleFilterChange);
+        submitReportBtn.addEventListener('click', handleReportSubmit);
+        resolveItemBtn.addEventListener('click', handleResolveItem);
+
+        // Initialize
+        fetchItems();
+
+        // Filter Functions
+        function handleFilterSubmit(e) {
+            e.preventDefault();
+            applyFilters();
+        }
+
+        function handleFilterChange() {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            currentFilters.type = typeFilter.value;
+            currentFilters.category = categoryFilter.value;
+            currentFilters.search = searchInput.value.toLowerCase();
+            
+            const filteredItems = currentItems.filter(item => {
+                if (currentFilters.type !== 'all' && item.item_type !== currentFilters.type) return false;
+                if (currentFilters.category !== 'all' && item.category !== currentFilters.category) return false;
+                if (currentFilters.search && !(
+                    item.title.toLowerCase().includes(currentFilters.search) ||
+                    item.description.toLowerCase().includes(currentFilters.search) ||
+                    item.location.toLowerCase().includes(currentFilters.search)
+                )) return false;
+                return true;
+            });
+            
+            renderItems(filteredItems);
+        }
+
+        // API Functions
+        async function fetchItems() {
+            try {
+                const response = await fetch('/api/lost-found/items');
+                const result = await response.json();
+                if (result.success) {
+                    currentItems = result.data;
+                    applyFilters();
+                }
+            } catch (error) {
+                console.error('Error fetching items:', error);
+                showToast('error', 'Failed to fetch items');
+            }
+        }
+
+        async function handleReportSubmit() {
+            const formData = new FormData(reportItemForm);
+            const data = {
+                title: formData.get('title'),
+                description: formData.get('description'),
+                category: formData.get('category'),
+                item_type: formData.get('item_type'),
+                location: formData.get('location'),
+                contact_method: formData.get('contact_method'),
+                contact_info: formData.get('contact_info'),
+                user_id: 'anonymous' // For now, using anonymous
+            };
+
+            try {
+                const response = await fetch('/api/lost-found/report', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showToast('success', result.message);
+                    reportItemForm.reset();
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('reportItemModal'));
+                    modal.hide();
+                    fetchItems(); // Refresh the list
+                } else {
+                    showToast('error', result.message);
+                }
+            } catch (error) {
+                console.error('Error reporting item:', error);
+                showToast('error', 'Failed to submit report');
+            }
+        }
+
+        async function handleResolveItem() {
+            const itemId = resolveItemBtn.dataset.itemId;
+            try {
+                const response = await fetch(`/api/lost-found/items/${itemId}/resolve`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showToast('success', result.message);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('itemDetailModal'));
+                    modal.hide();
+                    fetchItems(); // Refresh the list
+                } else {
+                    showToast('error', result.message);
+                }
+            } catch (error) {
+                console.error('Error resolving item:', error);
+                showToast('error', 'Failed to resolve item');
+            }
+        }
+
+        // Rendering Functions
+        function renderItems(items) {
+            itemsContainer.innerHTML = '';
+            
+            if (items.length === 0) {
+                itemsContainer.innerHTML = `
+                    <div class="col-12">
+                        <div class="text-center py-5">
+                            <i class="bi bi-search display-1 text-muted"></i>
+                            <h3 class="mt-3">No items found</h3>
+                            <p class="text-muted">Try adjusting your filters or be the first to report an item!</p>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reportItemModal">
+                                <i class="bi bi-plus-circle"></i> Report Item
+                            </button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            items.forEach(item => {
+                const itemCard = createItemCard(item);
+                itemsContainer.appendChild(itemCard);
+            });
+        }
+
+        function createItemCard(item) {
+            const col = document.createElement('div');
+            col.className = 'col-md-6 col-lg-4';
+            
+            col.innerHTML = `
+                <div class="card h-100 shadow-sm item-card" data-item-type="${item.item_type}">
+                    ${item.image_url ? 
+                        `<img src="${item.image_url}" class="card-img-top item-image" alt="${item.title}">` :
+                        `<div class="card-img-top bg-light d-flex align-items-center justify-content-center item-image-placeholder">
+                            <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                        </div>`
+                    }
+                    
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-${item.item_type === 'lost' ? 'danger' : 'success'}">
+                                ${item.item_type.charAt(0).toUpperCase() + item.item_type.slice(1)}
+                            </span>
+                            <small class="text-muted">${item.created_at}</small>
+                        </div>
+                        
+                        <h5 class="card-title">${item.title}</h5>
+                        <p class="card-text text-muted">${item.description.length > 100 ? item.description.substring(0, 100) + '...' : item.description}</p>
+                        
+                        <div class="mb-2">
+                            <small class="text-muted">
+                                <i class="bi bi-geo-alt"></i> ${item.location}
+                            </small>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <span class="badge bg-secondary">${item.category.charAt(0).toUpperCase() + item.category.slice(1)}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent">
+                        <div class="d-grid">
+                            <button class="btn btn-outline-primary" onclick="viewItemDetails(${item.id})">
+                                <i class="bi bi-eye"></i> View Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return col;
+        }
+
+        function viewItemDetails(itemId) {
+            const item = currentItems.find(i => i.id === itemId);
+            if (!item) return;
+
+            const detailContent = document.getElementById('itemDetailContent');
+            detailContent.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        ${item.image_url ? 
+                            `<img src="${item.image_url}" class="img-fluid rounded" alt="${item.title}">` :
+                            `<div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 200px;">
+                                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                            </div>`
+                        }
+                    </div>
+                    <div class="col-md-6">
+                        <h4>${item.title}</h4>
+                        <p class="text-muted">${item.description}</p>
+                        
+                        <div class="mb-3">
+                            <strong>Type:</strong> 
+                            <span class="badge bg-${item.item_type === 'lost' ? 'danger' : 'success'}">${item.item_type.charAt(0).toUpperCase() + item.item_type.slice(1)}</span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Category:</strong> 
+                            <span class="badge bg-secondary">${item.category.charAt(0).toUpperCase() + item.category.slice(1)}</span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Location:</strong> ${item.location}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Reported:</strong> ${item.created_at}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Contact:</strong> ${item.contact_method === 'anonymous' ? 'Anonymous' : item.contact_info}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Show/hide resolve button based on item status
+            if (item.status === 'active') {
+                resolveItemBtn.style.display = 'block';
+                resolveItemBtn.dataset.itemId = item.id;
+            } else {
+                resolveItemBtn.style.display = 'none';
+            }
+
+            const modal = new bootstrap.Modal(document.getElementById('itemDetailModal'));
+            modal.show();
+        }
+
+        // Utility Functions
+        function showToast(type, message) {
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-bg-${type === 'success' ? 'success' : 'danger'} border-0 show position-fixed bottom-0 start-50 translate-middle-x mb-4 shadow`;
+            toast.role = 'alert';
+            toast.style.minWidth = '260px';
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Coming soon links
+        document.querySelectorAll('[data-coming]').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                const toast = document.createElement('div');
+                toast.className = 'toast align-items-center text-bg-light border-0 show position-fixed bottom-0 start-50 translate-middle-x mb-4 shadow';
+                toast.role = 'alert';
+                toast.style.minWidth = '260px';
+                toast.innerHTML = `<div class="d-flex"><div class="toast-body"><i class="bi bi-info-circle me-2" style="color:#4b0082"></i>Section coming soon!</div><button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2500);
+            });
+        });
+
+        // Protected routes (prototype)
+        let isLoggedIn = false;
+        function protectNavigation(e){
+            if(!isLoggedIn){
+                e.preventDefault();
+                const regModal = new bootstrap.Modal(document.getElementById('registerModal'));
+                regModal.show();
+            }
+        }
+        document.querySelectorAll('.requires-auth').forEach(el=>{
+            el.addEventListener('click', protectNavigation);
+        });
+
+        // Flip auth on successful login/register in prototype
+        document.getElementById('createAccountBtn').addEventListener('click', () => {
+            isLoggedIn = true;
+            alert('Account created successfully!');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+            modal && modal.hide();
+        });
+        
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            isLoggedIn = true;
+            alert('Logged in!');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+            modal && modal.hide();
+        });
+    </script>
+</body>
+</html>
