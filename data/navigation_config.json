@@ -1,0 +1,37 @@
+{
+  "categories": [
+    { "id": "Academic", "displayName": "Academic Buildings" },
+    { "id": "Hostel", "displayName": "Hostels" },
+    { "id": "Facility", "displayName": "Campus Facilities" },
+    { "id": "Sports", "displayName": "Sports Arenas" },
+    { "id": "Admin", "displayName": "Administration" },
+    { "id": "Other", "displayName": "Other" }
+  ],
+  "quickLinks": [
+    {
+      "name": "Main Entrance",
+      "description": "The primary entrance to the campus.",
+      "coordinates": [16.8315, 81.5280]
+    },
+    {
+      "name": "Admin Building",
+      "description": "Find the Director's office and admissions.",
+      "targetId": "BLDG-06"
+    },
+    {
+      "name": "Central Library",
+      "description": "The main library and study area.",
+      "targetId": "BLDG-07"
+    },
+    {
+      "name": "Boys Hostel - 1",
+      "description": "Student residential building.",
+      "targetId": "BLDG-02"
+    },
+    {
+      "name": "Sports Complex",
+      "description": "Indoor sports facilities.",
+      "targetId": "BLDG-09"
+    }
+  ]
+}
