@@ -100,7 +100,7 @@ next_item_id = 1
 # Cafeteria data and user reporting system
 cafeteria_data = {
     'main_cafeteria': {
-        'name': 'Main Cafeteria',
+        'name': 'Canteen Block B',
         'current_rush_time': 15,
         'last_updated': None,
         'total_reports': 0,
@@ -110,19 +110,34 @@ cafeteria_data = {
                 'breakfast': {
                     'time': '7:00 AM - 10:00 AM',
                     'items': [
-                        {'name': 'Idli Sambar', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Dosa', 'price': 30, 'available': True, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Upma', 'price': 20, 'available': False, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Poha', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Idli Sambar', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Masala Dosa', 'price': 35, 'available': True, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Upma', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Poha', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Vada Sambar', 'price': 22, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Uttapam', 'price': 28, 'available': False, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=50&h=50&fit=crop&q=90'}
                     ]
                 },
                 'lunch': {
                     'time': '12:00 PM - 3:00 PM',
                     'items': [
-                        {'name': 'Rice + Dal + Sabzi', 'price': 45, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Chicken Curry', 'price': 80, 'available': True, 'image': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Paneer Butter Masala', 'price': 70, 'available': False, 'image': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Rajma Rice', 'price': 50, 'available': True, 'image': 'https://images.unsplash.com/photo-1596560548464-f010549b84d7?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Rice + Dal + Sabzi', 'price': 45, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Chicken Curry', 'price': 80, 'available': True, 'image': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Paneer Butter Masala', 'price': 70, 'available': True, 'image': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Rajma Rice', 'price': 50, 'available': True, 'image': 'https://images.unsplash.com/photo-1596560548464-f010549b84d7?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Biryani', 'price': 85, 'available': True, 'image': 'https://images.unsplash.com/photo-1563379091339-03246963d96c?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Curd Rice', 'price': 35, 'available': False, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=50&h=50&fit=crop&q=90'}
+                    ]
+                },
+                'snacks': {
+                    'time': '2:00 PM - 8:00 PM',
+                    'items': [
+                        {'name': 'Samosa', 'price': 15, 'available': True, 'image': 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Pakora', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Tea', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Coffee', 'price': 12, 'available': True, 'image': 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Sandwich', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Maggi', 'price': 18, 'available': False, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=50&h=50&fit=crop&q=90'}
                     ]
                 }
             },
@@ -130,19 +145,31 @@ cafeteria_data = {
                 'breakfast': {
                     'time': '7:00 AM - 10:00 AM',
                     'items': [
-                        {'name': 'Idli Sambar', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Vada', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Upma', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Poha', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Pongal', 'price': 22, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Vada Sambar', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Rava Upma', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Medu Vada', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Coconut Chutney', 'price': 8, 'available': True, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=50&h=50&fit=crop&q=90'}
                     ]
                 },
                 'lunch': {
                     'time': '12:00 PM - 3:00 PM',
                     'items': [
-                        {'name': 'Rice + Dal + Sabzi', 'price': 45, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Fish Curry', 'price': 85, 'available': True, 'image': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Aloo Gobi', 'price': 60, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Curd Rice', 'price': 40, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Sambar Rice', 'price': 40, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Fish Curry', 'price': 90, 'available': True, 'image': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Aloo Gobi', 'price': 55, 'available': True, 'image': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Dal Makhani', 'price': 65, 'available': True, 'image': 'https://images.unsplash.com/photo-1596560548464-f010549b84d7?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Jeera Rice', 'price': 35, 'available': False, 'image': 'https://images.unsplash.com/photo-1563379091339-03246963d96c?w=50&h=50&fit=crop&q=90'}
+                    ]
+                },
+                'snacks': {
+                    'time': '2:00 PM - 8:00 PM',
+                    'items': [
+                        {'name': 'Pani Puri', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Bhel Puri', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Masala Tea', 'price': 12, 'available': True, 'image': 'https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Filter Coffee', 'price': 15, 'available': True, 'image': 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Vadapav', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=50&h=50&fit=crop&q=90'}
                     ]
                 }
             },
@@ -150,19 +177,31 @@ cafeteria_data = {
                 'breakfast': {
                     'time': '7:00 AM - 10:00 AM',
                     'items': [
-                        {'name': 'Dosa', 'price': 30, 'available': True, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Uttapam', 'price': 35, 'available': True, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Upma', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Poha', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Rava Dosa', 'price': 32, 'available': True, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Onion Uttapam', 'price': 35, 'available': True, 'image': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Vermicelli Upma', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Aval Upma', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Tomato Chutney', 'price': 10, 'available': False, 'image': 'https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=50&h=50&fit=crop&q=90'}
                     ]
                 },
                 'lunch': {
                     'time': '12:00 PM - 3:00 PM',
                     'items': [
-                        {'name': 'Rice + Dal + Sabzi', 'price': 45, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Mutton Curry', 'price': 100, 'available': True, 'image': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Paneer Butter Masala', 'price': 70, 'available': True, 'image': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Rajma Rice', 'price': 50, 'available': True, 'image': 'https://images.unsplash.com/photo-1596560548464-f010549b84d7?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Lemon Rice', 'price': 40, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Mutton Curry', 'price': 100, 'available': True, 'image': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Palak Paneer', 'price': 75, 'available': True, 'image': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Chana Masala', 'price': 55, 'available': True, 'image': 'https://images.unsplash.com/photo-1596560548464-f010549b84d7?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Roti', 'price': 8, 'available': False, 'image': 'https://images.unsplash.com/photo-1563379091339-03246963d96c?w=50&h=50&fit=crop&q=90'}
+                    ]
+                },
+                'snacks': {
+                    'time': '2:00 PM - 8:00 PM',
+                    'items': [
+                        {'name': 'Dahi Puri', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Sev Puri', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Cutting Chai', 'price': 8, 'available': True, 'image': 'https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Lassi', 'price': 15, 'available': True, 'image': 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Kachori', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=50&h=50&fit=crop&q=90'}
                     ]
                 }
             },
@@ -170,19 +209,29 @@ cafeteria_data = {
                 'breakfast': {
                     'time': '7:00 AM - 10:00 AM',
                     'items': [
-                        {'name': 'Idli Sambar', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Dosa', 'price': 30, 'available': True, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Pongal', 'price': 22, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Poha', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Appam', 'price': 28, 'available': True, 'image': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Puttu', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Idiyappam', 'price': 22, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Kadala Curry', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=50&h=50&fit=crop&q=90'},
+                        {'name': 'Banana', 'price': 8, 'available': False, 'image': 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=50&h=50&fit=crop&q=90'}
                     ]
                 },
                 'lunch': {
                     'time': '12:00 PM - 3:00 PM',
                     'items': [
-                        {'name': 'Rice + Dal + Sabzi', 'price': 45, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Chicken Curry', 'price': 80, 'available': True, 'image': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Dal Makhani', 'price': 65, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Jeera Rice', 'price': 45, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Rice + Dal + Sabzi', 'price': 45, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Chicken Curry', 'price': 80, 'available': True, 'image': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Dal Makhani', 'price': 65, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Jeera Rice', 'price': 45, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=80&h=60&fit=crop&q=90'}
+                    ]
+                },
+                'snacks': {
+                    'time': '2:00 PM - 8:00 PM',
+                    'items': [
+                        {'name': 'Samosa', 'price': 12, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Tea', 'price': 8, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Coffee', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Biscuits', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'}
                     ]
                 }
             },
@@ -190,19 +239,28 @@ cafeteria_data = {
                 'breakfast': {
                     'time': '7:00 AM - 10:00 AM',
                     'items': [
-                        {'name': 'Idli Sambar', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Dosa', 'price': 30, 'available': True, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Pongal', 'price': 22, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Poha', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Idli Sambar', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Dosa', 'price': 30, 'available': True, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Pongal', 'price': 22, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Poha', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=80&h=60&fit=crop&q=90'}
                     ]
                 },
                 'lunch': {
                     'time': '12:00 PM - 3:00 PM',
                     'items': [
-                        {'name': 'Rice + Dal + Sabzi', 'price': 45, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Chicken Curry', 'price': 80, 'available': True, 'image': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Paneer Butter Masala', 'price': 70, 'available': True, 'image': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Rajma Rice', 'price': 50, 'available': True, 'image': 'https://images.unsplash.com/photo-1596560548464-f010549b84d7?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Rice + Dal + Sabzi', 'price': 45, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Chicken Curry', 'price': 80, 'available': True, 'image': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Paneer Butter Masala', 'price': 70, 'available': True, 'image': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Rajma Rice', 'price': 50, 'available': True, 'image': 'https://images.unsplash.com/photo-1596560548464-f010549b84d7?w=80&h=60&fit=crop&q=90'}
+                    ]
+                },
+                'snacks': {
+                    'time': '2:00 PM - 8:00 PM',
+                    'items': [
+                        {'name': 'Samosa', 'price': 12, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Tea', 'price': 8, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Coffee', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Biscuits', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'}
                     ]
                 }
             },
@@ -210,19 +268,28 @@ cafeteria_data = {
                 'breakfast': {
                     'time': '7:00 AM - 10:00 AM',
                     'items': [
-                        {'name': 'Idli Sambar', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Dosa', 'price': 30, 'available': True, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Upma', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Poha', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Idli Sambar', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Dosa', 'price': 30, 'available': True, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Upma', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Poha', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=80&h=60&fit=crop&q=90'}
                     ]
                 },
                 'lunch': {
                     'time': '12:00 PM - 3:00 PM',
                     'items': [
-                        {'name': 'Rice + Dal + Sabzi', 'price': 45, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Chicken Curry', 'price': 80, 'available': True, 'image': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Paneer Butter Masala', 'price': 70, 'available': True, 'image': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Rajma Rice', 'price': 50, 'available': True, 'image': 'https://images.unsplash.com/photo-1596560548464-f010549b84d7?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Rice + Dal + Sabzi', 'price': 45, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Chicken Curry', 'price': 80, 'available': True, 'image': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Paneer Butter Masala', 'price': 70, 'available': True, 'image': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Rajma Rice', 'price': 50, 'available': True, 'image': 'https://images.unsplash.com/photo-1596560548464-f010549b84d7?w=80&h=60&fit=crop&q=90'}
+                    ]
+                },
+                'snacks': {
+                    'time': '2:00 PM - 8:00 PM',
+                    'items': [
+                        {'name': 'Samosa', 'price': 12, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Tea', 'price': 8, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Coffee', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Biscuits', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'}
                     ]
                 }
             },
@@ -230,112 +297,28 @@ cafeteria_data = {
                 'breakfast': {
                     'time': '7:00 AM - 10:00 AM',
                     'items': [
-                        {'name': 'Idli Sambar', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Dosa', 'price': 30, 'available': True, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Upma', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Poha', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Idli Sambar', 'price': 25, 'available': True, 'image': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Dosa', 'price': 30, 'available': True, 'image': 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Upma', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Poha', 'price': 18, 'available': True, 'image': 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=80&h=60&fit=crop&q=90'}
                     ]
                 },
                 'lunch': {
                     'time': '12:00 PM - 3:00 PM',
                     'items': [
-                        {'name': 'Rice + Dal + Sabzi', 'price': 45, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Chicken Curry', 'price': 80, 'available': True, 'image': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Paneer Butter Masala', 'price': 70, 'available': True, 'image': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Rajma Rice', 'price': 50, 'available': True, 'image': 'https://images.unsplash.com/photo-1596560548464-f010549b84d7?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Rice + Dal + Sabzi', 'price': 45, 'available': True, 'image': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Chicken Curry', 'price': 80, 'available': True, 'image': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Paneer Butter Masala', 'price': 70, 'available': True, 'image': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Rajma Rice', 'price': 50, 'available': True, 'image': 'https://images.unsplash.com/photo-1596560548464-f010549b84d7?w=80&h=60&fit=crop&q=90'}
                     ]
-                }
-            }
-        }
-    },
-    'canteen_block_a': {
-        'name': 'Canteen Block A',
-        'current_rush_time': 12,
-        'last_updated': None,
-        'total_reports': 0,
-        'crowd_reports': [],
-        'menu': {
-            'monday': {
+                },
                 'snacks': {
-                    'time': '9:00 AM - 6:00 PM',
+                    'time': '2:00 PM - 8:00 PM',
                     'items': [
-                        {'name': 'Samosa', 'price': 12, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Pakora', 'price': 15, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Tea', 'price': 8, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Biscuits', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Chips', 'price': 20, 'available': False, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'}
-                    ]
-                }
-            },
-            'tuesday': {
-                'snacks': {
-                    'time': '9:00 AM - 6:00 PM',
-                    'items': [
-                        {'name': 'Samosa', 'price': 12, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Pakora', 'price': 15, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Tea', 'price': 8, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Biscuits', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Chips', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'}
-                    ]
-                }
-            },
-            'wednesday': {
-                'snacks': {
-                    'time': '9:00 AM - 6:00 PM',
-                    'items': [
-                        {'name': 'Samosa', 'price': 12, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Pakora', 'price': 15, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Tea', 'price': 8, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Biscuits', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Chips', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'}
-                    ]
-                }
-            },
-            'thursday': {
-                'snacks': {
-                    'time': '9:00 AM - 6:00 PM',
-                    'items': [
-                        {'name': 'Samosa', 'price': 12, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Pakora', 'price': 15, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Tea', 'price': 8, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Biscuits', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Chips', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'}
-                    ]
-                }
-            },
-            'friday': {
-                'snacks': {
-                    'time': '9:00 AM - 6:00 PM',
-                    'items': [
-                        {'name': 'Samosa', 'price': 12, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Pakora', 'price': 15, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Tea', 'price': 8, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Biscuits', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Chips', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'}
-                    ]
-                }
-            },
-            'saturday': {
-                'snacks': {
-                    'time': '9:00 AM - 6:00 PM',
-                    'items': [
-                        {'name': 'Samosa', 'price': 12, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Pakora', 'price': 15, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Tea', 'price': 8, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Biscuits', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Chips', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'}
-                    ]
-                }
-            },
-            'sunday': {
-                'snacks': {
-                    'time': '9:00 AM - 6:00 PM',
-                    'items': [
-                        {'name': 'Samosa', 'price': 12, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Pakora', 'price': 15, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Tea', 'price': 8, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Biscuits', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'},
-                        {'name': 'Chips', 'price': 20, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=100&h=100&fit=crop&q=80'}
+                        {'name': 'Samosa', 'price': 12, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Tea', 'price': 8, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Coffee', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'},
+                        {'name': 'Biscuits', 'price': 10, 'available': True, 'image': 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=80&h=60&fit=crop&q=90'}
                     ]
                 }
             }
