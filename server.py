@@ -1,7 +1,7 @@
 import os
 import json
 from typing import Any, Dict, List, Optional
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory, render_template
 from flask_cors import CORS
 
 DATA_DIR = os.getenv("DATA_DIR", os.path.join(os.getcwd(), "data"))
@@ -19,10 +19,22 @@ def create_app() -> Flask:
     # Enable CORS for all routes (adjust origins for production as needed)
     CORS(app, resources={r"/*": {"origins": "*"}})
 
-    @app.route("/", methods=["GET"])
-    def root():
-        return jsonify({"status": "Backend is running", "message": "Welcome to Campus Connect!"}), 200
 
+
+    @app.route("/health", methods=["GET"])
+    def health():
+        return jsonify({"status": "Backend is running"}), 200
+
+    # Home page at /
+    @app.route("/", methods=["GET"])
+    def home_page():
+        return send_from_directory("templates", "index.html")
+
+
+    # Serve Map at /map
+    @app.route("/map", methods=["GET"])
+    def map_page():
+        return send_from_directory("templates", "map.html")
 
     @app.route("/api/events", methods=["GET"])
     def get_events():
