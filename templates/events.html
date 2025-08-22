@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management App</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Bootstrap CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="events-page">
+    <!-- Fixed Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top border-bottom app-navbar" id="top">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+                <i class="bi bi-mortarboard-fill icon-primary"></i>
+                <span class="fw-semibold">Smart Campus App</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link requires-auth" href="/map"><i class="bi bi-geo-alt me-1"></i>Navigation</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/events"><i class="bi bi-calendar-event me-1"></i>Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-coming><i class="bi bi-search me-1"></i>Lost &amp; Found</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-coming><i class="bi bi-cup-hot me-1"></i>Cafeteria</a></li>
+                </ul>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
+                        <i class="bi bi-person-plus-fill me-1"></i>Register
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="mt-5 pt-4">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar -->
+                <aside class="col-lg-3 sidebar" id="sidebar">
+                    <div class="statistics">
+                        <h2>Statistics</h2>
+                        <p>Total Events: <span id="totalEvents">0</span></p>
+                        <p>Total Participants: <span id="totalParticipants">0</span></p>
+                        <p>Upcoming Events: <span id="upcomingEvents">0</span></p>
+                    </div>
+                    
+                    <div class="filters">
+                        <h2>Categories</h2>
+                        <div class="category-tabs">
+                            <button class="category-tab active" data-category="all">
+                                <i class="fas fa-calendar"></i> All Events
+                            </button>
+                            <button class="category-tab" data-category="Sports">
+                                <i class="fas fa-running"></i> Sports
+                            </button>
+                            <button class="category-tab" data-category="Cultural">
+                                <i class="fas fa-music"></i> Cultural
+                            </button>
+                            <button class="category-tab" data-category="Tech">
+                                <i class="fas fa-laptop-code"></i> Tech
+                            </button>
+                        </div>
+                        
+                        <h2>Status</h2>
+                        <div class="status-filters">
+                            <button class="status-filter active" data-status="all">
+                                <i class="fas fa-list"></i> All
+                            </button>
+                            <button class="status-filter" data-status="upcoming">
+                                <i class="fas fa-clock"></i> Upcoming
+                            </button>
+                            <button class="status-filter" data-status="ongoing">
+                                <i class="fas fa-play"></i> Ongoing
+                            </button>
+                            <button class="status-filter" data-status="finished">
+                                <i class="fas fa-check"></i> Finished
+                            </button>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Content Section -->
+                <section class="col-lg-9 content">
+                    <div class="controls">
+                        <button id="menuToggle" class="menu-toggle d-lg-none">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <input type="text" id="searchBar" placeholder="Search events...">
+                        <select id="sortOptions">
+                            <option value="name">Name</option>
+                            <option value="date">Date</option>
+                            <option value="participants">Participants</option>
+                        </select>
+                    </div>
+                    
+                    <div id="eventList" class="event-list">
+                        <!-- Event cards will be loaded here -->
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginLabel"><i class="bi bi-box-arrow-in-right me-2"></i>Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="form-label">Register Number</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="loginBtn">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registerLabel"><i class="bi bi-person-plus-fill me-2"></i>Register</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label class="form-label">Register Number</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Year</label>
+                                <select class="form-select" required>
+                                    <option value="" selected disabled>Choose…</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                </select>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Branch</label>
+                                <select class="form-select" required>
+                                    <option value="" selected disabled>Choose…</option>
+                                    <option>CSE</option>
+                                    <option>ECE</option>
+                                    <option>EEE</option>
+                                    <option>ME</option>
+                                    <option>CE</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="createAccountBtn">Create Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <script>
+        // Event Management JavaScript
+        let events = [];
+        let currentFilter = 'all';
+        let currentStatus = 'all';
+        let currentSort = 'name';
+
+        // Fake data for testing
+        const fakeEvents = [
+            {
+                id: 1,
+                name: "Annual Sports Meet",
+                category: "Sports",
+                date: "2025-01-15T09:00:00",
+                location: "Sports Complex",
+                description: "Annual inter-department sports competition featuring athletics, football, basketball, and more.",
+                participants: "John Doe, Jane Smith, Mike Johnson",
+                coordinators: "Coach Wilson: 9876543210, Prof. Davis: 9876543211",
+                winners: "CSE Department - 1st Place, ECE Department - 2nd Place",
+                imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop",
+                status: "upcoming"
+            },
+            {
+                id: 2,
+                name: "Cultural Night 2025",
+                category: "Cultural",
+                date: "2025-01-20T18:00:00",
+                location: "Auditorium",
+                description: "A spectacular evening of music, dance, drama, and cultural performances by talented students.",
+                participants: "Music Club, Dance Team, Drama Society",
+                coordinators: "Prof. Kumar: 9876543212, Ms. Patel: 9876543213",
+                winners: "Best Performance - Dance Team, Best Music - Guitar Ensemble",
+                imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=300&fit=crop",
+                status: "upcoming"
+            },
+            {
+                id: 3,
+                name: "Tech Fest 2025",
+                category: "Tech",
+                date: "2025-01-25T10:00:00",
+                location: "Computer Science Block",
+                description: "Showcase of innovative projects, coding competitions, and tech talks by industry experts.",
+                participants: "CSE Students, ECE Students, Tech Enthusiasts",
+                coordinators: "Dr. Sharma: 9876543214, Prof. Reddy: 9876543215",
+                winners: "Best Project - AI Chatbot, Best Coder - Alex Chen",
+                imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop",
+                status: "upcoming"
+            },
+            {
+                id: 4,
+                name: "Basketball Tournament",
+                category: "Sports",
+                date: "2025-01-10T16:00:00",
+                location: "Basketball Court",
+                description: "Inter-year basketball tournament with exciting matches and prizes.",
+                participants: "All Year Students",
+                coordinators: "Coach Anderson: 9876543216",
+                winners: "3rd Year - Champions, 2nd Year - Runners Up",
+                imageUrl: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&h=300&fit=crop",
+                status: "finished"
+            },
+            {
+                id: 5,
+                name: "Poetry Slam",
+                category: "Cultural",
+                date: "2025-01-12T19:00:00",
+                location: "Library Seminar Hall",
+                description: "An evening of powerful poetry performances and spoken word art.",
+                participants: "Literature Club, Poetry Enthusiasts",
+                coordinators: "Prof. Singh: 9876543217",
+                winners: "Best Performance - Sarah Wilson, Most Creative - David Brown",
+                imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
+                status: "finished"
+            },
+            {
+                id: 6,
+                name: "Hackathon 2025",
+                category: "Tech",
+                date: "2025-01-18T08:00:00",
+                location: "Innovation Lab",
+                description: "24-hour coding challenge to solve real-world problems with amazing prizes.",
+                participants: "Coding Teams, Developers",
+                coordinators: "Dr. Gupta: 9876543218, Prof. Iyer: 9876543219",
+                winners: "1st Place - Team CodeCraft, 2nd Place - Team Innovators",
+                imageUrl: "https://images.unsplash.com/photo-1555066931-4365d9e62a0d?w=400&h=300&fit=crop",
+                status: "ongoing"
+            }
+        ];
+
+        // DOM Elements
+        const eventList = document.getElementById('eventList');
+        const searchBar = document.getElementById('searchBar');
+        const sortOptions = document.getElementById('sortOptions');
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        const statusFilters = document.querySelectorAll('.status-filter');
+
+        // Event Listeners
+        menuToggle.addEventListener('click', toggleSidebar);
+        searchBar.addEventListener('input', handleSearch);
+        sortOptions.addEventListener('change', handleSort);
+
+        // Category and Status Filter Event Listeners
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentFilter = tab.dataset.category;
+                renderEvents();
+            });
+        });
+
+        statusFilters.forEach(filter => {
+            filter.addEventListener('click', () => {
+                statusFilters.forEach(f => f.classList.remove('active'));
+                filter.classList.add('active');
+                currentStatus = filter.dataset.status;
+                renderEvents();
+            });
+        });
+
+        // Sidebar Toggle Function
+        function toggleSidebar() {
+            sidebar.classList.toggle('show');
+        }
+
+        // API Functions
+        async function fetchEvents() {
+            try {
+                const response = await fetch('/api/events');
+                events = await response.json();
+                
+                // If no events from API, use fake data
+                if (events.length === 0) {
+                    events = fakeEvents;
+                }
+                
+                renderEvents();
+                updateStatistics();
+            } catch (error) {
+                console.error('Error fetching events:', error);
+                // Use fake data if API fails
+                events = fakeEvents;
+                renderEvents();
+                updateStatistics();
+            }
+        }
+
+        // Event Handling Functions
+        function handleSearch() {
+            renderEvents();
+        }
+
+        function handleSort() {
+            currentSort = sortOptions.value;
+            renderEvents();
+        }
+
+        // Rendering Functions
+        function renderEvents() {
+            let filteredEvents = filterEvents();
+            filteredEvents = sortEvents(filteredEvents);
+            
+            eventList.innerHTML = filteredEvents.map(event => `
+                <div class="event-card" data-id="${event.id}">
+                    <div class="event-image">
+                        <img src="${event.imageUrl}" alt="${event.name}">
+                    </div>
+                    <div class="event-content">
+                        <h3>${event.name}</h3>
+                        <p class="event-category">${event.category}</p>
+                        <p class="event-date"><i class="fas fa-calendar"></i> ${formatDate(event.date)}</p>
+                        <p class="event-location"><i class="fas fa-map-marker-alt"></i> ${event.location}</p>
+                        <p class="event-description">${event.description}</p>
+                        <div class="event-participants">
+                            <strong>Participants:</strong> ${event.participants}
+                        </div>
+                        <div class="event-coordinators">
+                            <strong>Coordinators:</strong> ${event.coordinators}
+                        </div>
+                        ${event.winners ? `<div class="event-winners"><strong>Winners:</strong> ${event.winners}</div>` : ''}
+                        <div class="event-actions">
+                            <button onclick="registerForEvent(${event.id})" class="register-btn">
+                                <i class="fas fa-user-plus"></i> Register
+                            </button>
+                            <button onclick="viewEventDetails(${event.id})" class="view-btn">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterEvents() {
+            let filtered = events;
+            
+            // Category filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(event => event.category === currentFilter);
+            }
+            
+            // Status filter
+            if (currentStatus !== 'all') {
+                filtered = filtered.filter(event => event.status === currentStatus);
+            }
+            
+            // Search filter
+            const searchTerm = searchBar.value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(event => 
+                    event.name.toLowerCase().includes(searchTerm) ||
+                    event.description.toLowerCase().includes(searchTerm) ||
+                    event.location.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            return filtered;
+        }
+
+        function sortEvents(eventsToSort) {
+            return eventsToSort.sort((a, b) => {
+                switch (currentSort) {
+                    case 'name':
+                        return a.name.localeCompare(b.name);
+                    case 'date':
+                        return new Date(a.date) - new Date(b.date);
+                    case 'participants':
+                        return (a.participants || '').localeCompare(b.participants || '');
+                    default:
+                        return 0;
+                }
+            });
+        }
+
+        function updateStatistics() {
+            document.getElementById('totalEvents').textContent = events.length;
+            document.getElementById('totalParticipants').textContent = events.reduce((sum, event) => 
+                sum + (event.participants ? event.participants.split(',').length : 0), 0
+            );
+            document.getElementById('upcomingEvents').textContent = events.filter(event => 
+                event.status === 'upcoming'
+            ).length;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+
+        // Event Actions
+        function registerForEvent(eventId) {
+            const event = events.find(e => e.id === eventId);
+            if (event) {
+                alert(`Registration successful for "${event.name}"!\n\nEvent Details:\nDate: ${formatDate(event.date)}\nLocation: ${event.location}\n\nYou will receive further instructions via email.`);
+            }
+        }
+
+        function viewEventDetails(eventId) {
+            const event = events.find(e => e.id === eventId);
+            if (event) {
+                const details = `
+Event: ${event.name}
+Category: ${event.category}
+Date: ${formatDate(event.date)}
+Location: ${event.location}
+Description: ${event.description}
+Participants: ${event.participants}
+Coordinators: ${event.coordinators}
+${event.winners ? `Winners: ${event.winners}` : ''}
+                `;
+                alert(details);
+            }
+        }
+
+        // Initialize
+        fetchEvents();
+
+        // Coming soon links
+        document.querySelectorAll('[data-coming]').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                const toast = document.createElement('div');
+                toast.className = 'toast align-items-center text-bg-light border-0 show position-fixed bottom-0 start-50 translate-middle-x mb-4 shadow';
+                toast.role = 'alert';
+                toast.style.minWidth = '260px';
+                toast.innerHTML = `<div class="d-flex"><div class="toast-body"><i class="bi bi-info-circle me-2" style="color:#4b0082"></i>Section coming soon!</div><button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2500);
+            });
+        });
+
+        // Protected routes (prototype)
+        let isLoggedIn = false;
+        function protectNavigation(e){
+            if(!isLoggedIn){
+                e.preventDefault();
+                const regModal = new bootstrap.Modal(document.getElementById('registerModal'));
+                regModal.show();
+            }
+        }
+        document.querySelectorAll('.requires-auth').forEach(el=>{
+            el.addEventListener('click', protectNavigation);
+        });
+
+        // Flip auth on successful login/register in prototype
+        document.getElementById('createAccountBtn').addEventListener('click', () => {
+            isLoggedIn = true;
+            alert('Account created successfully!');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+            modal && modal.hide();
+        });
+        
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            isLoggedIn = true;
+            alert('Logged in!');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+            modal && modal.hide();
+        });
+    </script>
+</body>
+</html>

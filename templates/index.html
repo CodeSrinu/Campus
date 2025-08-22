@@ -25,9 +25,9 @@
       <div class="collapse navbar-collapse" id="mainNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item"><a class="nav-link requires-auth" href="/map"><i class="bi bi-geo-alt me-1"></i>Navigation</a></li>
-          <li class="nav-item"><a class="nav-link" href="#" data-coming><i class="bi bi-calendar-event me-1"></i>Events</a></li>
+          <li class="nav-item"><a class="nav-link" href="/events"><i class="bi bi-calendar-event me-1"></i>Events</a></li>
           <li class="nav-item"><a class="nav-link" href="#" data-coming><i class="bi bi-search me-1"></i>Lost &amp; Found</a></li>
-          <li class="nav-item"><a class="nav-link" href="#" data-coming><i class="bi bi-cup-hot me-1"></i>Cafeteria</a></li>
+          <li class="nav-item"><a class="nav-link" href="/cafeteria"><i class="bi bi-cup-hot me-1"></i>Cafeteria</a></li>
         </ul>
         <div class="d-flex gap-2">
           <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
@@ -82,7 +82,7 @@
               <div class="small text-muted">Explore campus with an interactive, branded map.</div>
             </div>
           </a>
-          <a class="feature-item requires-auth" href="/events">
+          <a class="feature-item" href="/events">
             <i class="bi bi-calendar-event icon-primary"></i>
             <div>
               <div class="fw-semibold">Events</div>
@@ -96,12 +96,12 @@
               <div class="small text-muted">Report and recover items with privacy-first contact.</div>
             </div>
           </a>
-          <a class="feature-item requires-auth" href="/cafeteria">
-            <i class="bi bi-cup-hot icon-primary"></i>
-            <div>
-              <div class="fw-semibold">Cafeteria Crowd</div>
-              <div class="small text-muted">See live crowd levels and avoid queues.</div>
+          <a class="feature-item" href="/cafeteria">
+            <div class="feature-icon">
+              <i class="bi bi-cup-hot"></i>
             </div>
+            <h3>Cafeteria</h3>
+            <p>Check daily menus, prices, and real-time crowd levels to plan your meals efficiently.</p>
           </a>
         </div>
       </div>

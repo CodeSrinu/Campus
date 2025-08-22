@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafeteria - Smart Campus App</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Bootstrap CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="cafeteria-page">
+    <!-- Fixed Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top border-bottom app-navbar" id="top">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+                <i class="bi bi-mortarboard-fill icon-primary"></i>
+                <span class="fw-semibold">Smart Campus App</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link requires-auth" href="/map"><i class="bi bi-geo-alt me-1"></i>Navigation</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/events"><i class="bi bi-calendar-event me-1"></i>Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" data-coming><i class="bi bi-search me-1"></i>Lost &amp; Found</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/cafeteria"><i class="bi bi-cup-hot me-1"></i>Cafeteria</a></li>
+                </ul>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
+                        <i class="bi bi-person-plus-fill me-1"></i>Register
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="mt-5 pt-4">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h1 class="display-4 text-center mb-3">🍽️ Campus Menu & Rush Tracker</h1>
+                    <p class="lead text-center text-muted">
+                        Check today's menu, prices, availability and expected rush clear times!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Admin Report Section - Moved to top -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="admin-report-section">
+                        <h5>📊 Admin Report Submission</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-label" for="adminCode">Admin Code:</label>
+                                <input type="password" class="form-control admin-code-input" id="adminCode" name="adminCode" placeholder="Enter admin code" aria-label="Admin code input">
+                                <small class="text-muted">Development code: NITAP001</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="cafeteriaSelect">Select Cafeteria:</label>
+                                <select class="form-select cafeteria-select" id="cafeteriaSelect" name="cafeteriaSelect" disabled aria-label="Cafeteria selection dropdown">
+                                    <option value="">Select cafeteria...</option>
+                                    <option value="main_cafeteria">Main Cafeteria</option>
+                                    <option value="canteen_block_a">Canteen Block A</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="rushTimeRange">Expected wait time (minutes):</label>
+                                <input type="range" class="form-range" id="rushTimeRange" name="rushTimeRange" min="0" max="60" value="15" disabled aria-label="Expected wait time in minutes">
+                                <div class="d-flex justify-content-between">
+                                    <small>0 min</small>
+                                    <small id="rushTimeValue">15 min</small>
+                                    <small>60 min</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <button class="btn btn-primary" id="submitReportBtn" disabled>
+                                    <i class="fas fa-upload"></i> Submit Report
+                                </button>
+                                <small class="text-muted ms-2">Only authorized users can submit crowd reports</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day Selector -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <h6 class="card-title mb-3">📅 Select Day</h6>
+                            <div class="btn-group" role="group">
+                                <button class="btn day-btn active" data-day="monday">Monday</button>
+                                <button class="btn day-btn" data-day="tuesday">Tuesday</button>
+                                <button class="btn day-btn" data-day="wednesday">Wednesday</button>
+                                <button class="btn day-btn" data-day="thursday">Thursday</button>
+                                <button class="btn day-btn" data-day="friday">Friday</button>
+                                <button class="btn day-btn" data-day="saturday">Saturday</button>
+                                <button class="btn day-btn" data-day="sunday">Sunday</button>
+                            </div>
+                            <p class="small text-muted mt-2 mb-0">Currently showing: <strong id="currentDay">Monday</strong> menu</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cafeteria Menu Cards -->
+            <div class="row" id="cafeteria-grid">
+                <!-- Cafeteria cards will be loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginLabel"><i class="bi bi-box-arrow-in-right me-2"></i>Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="form-label">Register Number</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="loginBtn">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registerLabel"><i class="bi bi-person-plus-fill me-2"></i>Register</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label class="form-label">Register Number</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Year</label>
+                                <select class="form-select" required>
+                                    <option value="" selected disabled>Choose…</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                </select>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Branch</label>
+                                <select class="form-select" required>
+                                    <option value="" selected disabled>Choose…</option>
+                                    <option>CSE</option>
+                                    <option>ECE</option>
+                                    <option>EEE</option>
+                                    <option>ME</option>
+                                    <option>CE</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="createAccountBtn">Create Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <script>
+        // Cafeteria Management JavaScript
+        let currentDay = 'monday';
+        let cafeteriaData = {};
+        let userReports = {};
+
+        // DOM Elements
+        const dayButtons = document.querySelectorAll('.day-btn');
+        const currentDaySpan = document.getElementById('currentDay');
+        const cafeteriaGrid = document.getElementById('cafeteria-grid');
+        const adminCodeInput = document.getElementById('adminCode');
+        const cafeteriaSelect = document.getElementById('cafeteriaSelect');
+        const rushTimeRange = document.getElementById('rushTimeRange');
+        const rushTimeValue = document.getElementById('rushTimeValue');
+        const submitReportBtn = document.getElementById('submitReportBtn');
+
+        // Event Listeners
+        dayButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                dayButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentDay = btn.dataset.day;
+                currentDaySpan.textContent = currentDay.charAt(0).toUpperCase() + currentDay.slice(1);
+                renderCafeterias();
+            });
+        });
+
+        // Admin Code Verification
+        adminCodeInput.addEventListener('input', verifyAdminCode);
+        rushTimeRange.addEventListener('input', (e) => {
+            rushTimeValue.textContent = e.target.value + ' min';
+        });
+
+        // Initialize
+        fetchCafeteriaData();
+
+        // Admin Functions
+        function verifyAdminCode() {
+            const adminCode = adminCodeInput.value.trim();
+            const isAdmin = adminCode === 'NITAP001';
+            
+            cafeteriaSelect.disabled = !isAdmin;
+            rushTimeRange.disabled = !isAdmin;
+            submitReportBtn.disabled = !isAdmin;
+            
+            if (isAdmin) {
+                adminCodeInput.classList.remove('is-invalid');
+                adminCodeInput.classList.add('is-valid');
+            } else {
+                adminCodeInput.classList.remove('is-valid');
+                if (adminCode.length > 0) {
+                    adminCodeInput.classList.add('is-invalid');
+                } else {
+                    adminCodeInput.classList.remove('is-invalid');
+                }
+            }
+        }
+
+        // Submit Report Function
+        submitReportBtn.addEventListener('click', async () => {
+            const cafeteriaId = cafeteriaSelect.value;
+            const rushTime = parseInt(rushTimeRange.value);
+            
+            if (!cafeteriaId) {
+                showToast('error', 'Please select a cafeteria');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/cafeteria/report-crowd', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cafeteria_id: cafeteriaId,
+                        rush_time: rushTime,
+                        user_id: 'admin_user'
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    // Update local data
+                    cafeteriaData[cafeteriaId].current_rush_time = rushTime;
+                    cafeteriaData[cafeteriaId].last_updated = new Date().toLocaleTimeString('en-US', { 
+                        hour: '2-digit', 
+                        minute: '2-digit',
+                        hour12: true 
+                    });
+                    
+                    // Show success message
+                    showToast('success', result.message);
+                    
+                    // Re-render to show updated data
+                    renderCafeterias();
+                    
+                    // Reset form
+                    cafeteriaSelect.value = '';
+                    rushTimeRange.value = 15;
+                    rushTimeValue.textContent = '15 min';
+                } else {
+                    showToast('error', result.message);
+                }
+            } catch (error) {
+                console.error('Error reporting crowd:', error);
+                showToast('error', 'Failed to submit report. Please try again.');
+            }
+        });
+
+        // API Functions
+        async function fetchCafeteriaData() {
+            try {
+                const response = await fetch('/api/cafeteria/status');
+                const result = await response.json();
+                if (result.success) {
+                    cafeteriaData = result.data;
+                    renderCafeterias();
+                }
+            } catch (error) {
+                console.error('Error fetching cafeteria data:', error);
+            }
+        }
+
+        // Rendering Functions
+        function renderCafeterias() {
+            cafeteriaGrid.innerHTML = '';
+            
+            Object.entries(cafeteriaData).forEach(([cafeteriaId, cafeteria]) => {
+                const cafeteriaCard = createCafeteriaCard(cafeteriaId, cafeteria);
+                cafeteriaGrid.appendChild(cafeteriaCard);
+            });
+        }
+
+        function createCafeteriaCard(cafeteriaId, cafeteria) {
+            const col = document.createElement('div');
+            col.className = 'col-12 mb-5';
+            
+            const crowdLevel = getCrowdLevel(cafeteria.current_rush_time);
+            
+            col.innerHTML = `
+                <div class="card shadow-sm cafeteria-card" data-cafeteria-id="${cafeteriaId}">
+                    <div class="card-header bg-primary text-white">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h4 class="mb-0">🏢 ${cafeteria.name}</h4>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <div class="rush-indicator">
+                                    <span class="badge fs-6" style="background-color: ${crowdLevel.color}">
+                                        ${crowdLevel.icon} ${crowdLevel.level} Rush - ${cafeteria.current_rush_time} min
+                                    </span>
+                                </div>
+                                <small class="text-light">
+                                    ${cafeteria.last_updated ? `Updated: ${cafeteria.last_updated}` : 'No recent updates'}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Menu Sections -->
+                        ${renderMenuSections(cafeteria.menu[currentDay])}
+                    </div>
+                </div>
+            `;
+
+            return col;
+        }
+
+        function renderMenuSections(dayMenu) {
+            if (!dayMenu) return '<p class="text-muted">No menu available for this day.</p>';
+            
+            let html = '';
+            Object.entries(dayMenu).forEach(([mealType, mealData]) => {
+                html += `
+                    <div class="meal-section mb-4">
+                        <h5 class="meal-header" onclick="toggleMealSection(this)">
+                            <span>${getMealIcon(mealType)} ${getMealName(mealType)}</span>
+                            <span class="badge bg-info">${mealData.time}</span>
+                            <button class="meal-toggle" aria-label="Toggle ${getMealName(mealType)} menu">
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+                        </h5>
+                        <div class="meal-content">
+                            <div class="row">
+                                ${mealData.items.map(item => `
+                                    <div class="col-md-6 col-lg-4 mb-3">
+                                        <div class="menu-item-card ${!item.available ? 'unavailable' : ''}">
+                                            <div class="menu-item-image">
+                                                <img src="${item.image}" alt="${item.name}" class="food-image">
+                                            </div>
+                                            <div class="menu-item-content">
+                                                <h6 class="menu-item-name">${item.name}</h6>
+                                                <p class="menu-item-price">₹${item.price}</p>
+                                                <span class="badge ${item.available ? 'bg-success' : 'bg-danger'}">
+                                                    ${item.available ? 'Available' : 'Not Available'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            return html;
+        }
+
+        function getMealIcon(mealType) {
+            const icons = {
+                'breakfast': '🌅',
+                'lunch': '🍽️',
+                'dinner': '🌙',
+                'all_day': '⏰',
+                'snacks': '🍿'
+            };
+            return icons[mealType] || '🍽️';
+        }
+
+        function getMealName(mealType) {
+            return mealType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function getCrowdLevel(rushTime) {
+            if (rushTime <= 5) {
+                return {
+                    level: 'Low',
+                    color: '#28a745',
+                    icon: '🟢',
+                    description: 'No waiting, go now!'
+                };
+            } else if (rushTime <= 15) {
+                return {
+                    level: 'Medium',
+                    color: '#ffc107',
+                    icon: '🟡',
+                    description: 'Short wait expected'
+                };
+            } else {
+                return {
+                    level: 'High',
+                    color: '#dc3545',
+                    icon: '🔴',
+                    description: 'Long wait, avoid if possible'
+                };
+            }
+        }
+
+        // Toggle meal section dropdown
+        function toggleMealSection(header) {
+            const content = header.nextElementSibling;
+            const toggle = header.querySelector('.meal-toggle i');
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                header.classList.remove('expanded');
+                toggle.classList.remove('bi-chevron-up');
+                toggle.classList.add('bi-chevron-down');
+            } else {
+                content.classList.add('show');
+                header.classList.add('expanded');
+                toggle.classList.remove('bi-chevron-down');
+                toggle.classList.add('bi-chevron-up');
+            }
+        }
+
+        // Utility Functions
+        function showToast(type, message) {
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-bg-${type === 'success' ? 'success' : 'danger'} border-0 show position-fixed bottom-0 start-50 translate-middle-x mb-4 shadow`;
+            toast.role = 'alert';
+            toast.style.minWidth = '260px';
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Coming soon links
+        document.querySelectorAll('[data-coming]').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                const toast = document.createElement('div');
+                toast.className = 'toast align-items-center text-bg-light border-0 show position-fixed bottom-0 start-50 translate-middle-x mb-4 shadow';
+                toast.role = 'alert';
+                toast.style.minWidth = '260px';
+                toast.innerHTML = `<div class="d-flex"><div class="toast-body"><i class="bi bi-info-circle me-2" style="color:#4b0082"></i>Section coming soon!</div><button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2500);
+            });
+        });
+
+        // Protected routes (prototype)
+        let isLoggedIn = false;
+        function protectNavigation(e){
+            if(!isLoggedIn){
+                e.preventDefault();
+                const regModal = new bootstrap.Modal(document.getElementById('registerModal'));
+                regModal.show();
+            }
+        }
+        document.querySelectorAll('.requires-auth').forEach(el=>{
+            el.addEventListener('click', protectNavigation);
+        });
+
+        // Flip auth on successful login/register in prototype
+        document.getElementById('createAccountBtn').addEventListener('click', () => {
+            isLoggedIn = true;
+            alert('Account created successfully!');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+            modal && modal.hide();
+        });
+        
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            isLoggedIn = true;
+            alert('Logged in!');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+            modal && modal.hide();
+        });
+    </script>
+</body>
+</html>
