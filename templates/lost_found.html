@@ -208,6 +208,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" id="deleteItemBtn" style="display: none;">
+                        <i class="bi bi-trash"></i> Remove Item
+                    </button>
                     <button type="button" class="btn btn-success" id="resolveItemBtn" style="display: none;">
                         <i class="bi bi-check-circle"></i> Mark as Resolved
                     </button>
@@ -316,6 +319,7 @@
         const submitReportBtn = document.getElementById('submitReportBtn');
         const reportItemForm = document.getElementById('reportItemForm');
         const resolveItemBtn = document.getElementById('resolveItemBtn');
+        const deleteItemBtn = document.getElementById('deleteItemBtn');
 
         // Event Listeners
         filterForm.addEventListener('submit', handleFilterSubmit);
@@ -324,6 +328,7 @@
         searchInput.addEventListener('input', handleFilterChange);
         submitReportBtn.addEventListener('click', handleReportSubmit);
         resolveItemBtn.addEventListener('click', handleResolveItem);
+        deleteItemBtn.addEventListener('click', handleDeleteItem);
 
         // Initialize
         fetchItems();
@@ -373,25 +378,15 @@
         }
 
         async function handleReportSubmit() {
-            const formData = new FormData(reportItemForm);
-            const data = {
-                title: formData.get('title'),
-                description: formData.get('description'),
-                category: formData.get('category'),
-                item_type: formData.get('item_type'),
-                location: formData.get('location'),
-                contact_method: formData.get('contact_method'),
-                contact_info: formData.get('contact_info'),
-                user_id: 'anonymous' // For now, using anonymous
-            };
+            const formData = new FormData(reportItemForm); // Use FormData directly from the form
+            
+            // No need to manually create a 'data' object and JSON.stringify it
+            // FormData handles the content type automatically for file uploads and form fields.
 
             try {
                 const response = await fetch('/api/lost-found/report', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
+                    body: formData // FormData automatically sets Content-Type header
                 });
 
                 const result = await response.json();
@@ -407,6 +402,31 @@
             } catch (error) {
                 console.error('Error reporting item:', error);
                 showToast('error', 'Failed to submit report');
+            }
+        }
+
+        async function handleDeleteItem() {
+            const itemId = deleteItemBtn.dataset.itemId;
+            if (!confirm('Are you sure you want to remove this item? This action cannot be undone.')) {
+                return;
+            }
+            try {
+                const response = await fetch(`/api/lost-found/items/${itemId}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+                if (result.message) {
+                    showToast('success', result.message);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('itemDetailModal'));
+                    modal.hide();
+                    fetchItems(); // Refresh the list
+                } else {
+                    showToast('error', result.error || 'Failed to delete item');
+                }
+            } catch (error) {
+                console.error('Error deleting item:', error);
+                showToast('error', 'Failed to delete item');
             }
         }
 
@@ -550,12 +570,15 @@
                 </div>
             `;
 
-            // Show/hide resolve button based on item status
+            // Show/hide resolve and delete buttons based on item status
             if (item.status === 'active') {
                 resolveItemBtn.style.display = 'block';
                 resolveItemBtn.dataset.itemId = item.id;
+                deleteItemBtn.style.display = 'block';
+                deleteItemBtn.dataset.itemId = item.id;
             } else {
                 resolveItemBtn.style.display = 'none';
+                deleteItemBtn.style.display = 'none';
             }
 
             const modal = new bootstrap.Modal(document.getElementById('itemDetailModal'));

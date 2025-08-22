@@ -4,8 +4,12 @@ from typing import Any, Dict, List, Optional
 from flask import Flask, jsonify, request, send_from_directory, render_template
 from flask_cors import CORS
 from datetime import datetime
+from werkzeug.utils import secure_filename
 
 DATA_DIR = os.getenv("DATA_DIR", os.path.join(os.getcwd(), "data"))
+UPLOAD_FOLDER = os.path.join(os.getcwd(), "static", "uploads")
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+MAX_IMAGE_FILESIZE_MB = 5 # 5 MB
 BOUNDARY_PATH = os.path.join(DATA_DIR, "campus_boundary.geojson")
 BUILDINGS_PATH = os.path.join(DATA_DIR, "buildings.geojson")
 NAV_CONFIG_PATH = os.path.join(DATA_DIR, "navigation_config.json")
@@ -94,7 +98,7 @@ events = [
 next_event_id = 7
 
 # Lost & Found data
-lost_found_items = []
+lost_found_items: List[Dict[str, Any]] = []
 next_item_id = 1
 
 # Cafeteria data and user reporting system
@@ -353,6 +357,15 @@ crowd_history = {}
 def create_app() -> Flask:
     """Create and configure the Flask application."""
     app = Flask(__name__)
+
+    global lost_found_items, next_item_id
+    lost_found_items = [] # Ensure lost_found_items is empty on app start
+    next_item_id = 1 # Reset item ID on app start
+    print(f"DEBUG: lost_found_items initialized to: {lost_found_items}", flush=True)
+
+    # Configure upload folder and max content length
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB limit
 
     # Enable CORS for all routes (adjust origins for production as needed)
     CORS(app, resources={r"/*": {"origins": "*"}})
@@ -653,6 +666,7 @@ def create_app() -> Flask:
     # Get all lost and found items
     @app.route("/api/lost-found/items")
     def get_lost_found_items():
+        print(f"DEBUG: get_lost_found_items returning: {lost_found_items}", flush=True)
         return jsonify({
             'success': True,
             'data': lost_found_items
@@ -663,19 +677,42 @@ def create_app() -> Flask:
     def report_lost_found_item():
         global next_item_id
         
+        print(f"Request mimetype: {request.mimetype}", flush=True) # Debug print
+        
         try:
-            data = request.get_json()
+            image_url = ''
+            if 'image' in request.files and request.files['image'].filename != '':
+                image_file = request.files['image']
+                if not image_file:
+                    return jsonify({'success': False, 'message': 'No image file provided'}), 400
+                if not allowed_file(image_file.filename):
+                    return jsonify({'success': False, 'message': 'Invalid file type. Allowed types: png, jpg, jpeg, gif'}), 400
+                
+                # Check file size
+                image_file.seek(0, os.SEEK_END)
+                file_size = image_file.tell()
+                image_file.seek(0) # Reset file pointer to the beginning
+                if file_size > MAX_IMAGE_FILESIZE_MB * 1024 * 1024:
+                    return jsonify({'success': False, 'message': f'Image file size exceeds {MAX_IMAGE_FILESIZE_MB} MB limit'}), 400
+
+                filename = secure_filename(image_file.filename)
+                os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+                file_path = os.path.join(UPLOAD_FOLDER, filename)
+                image_file.save(file_path)
+                image_url = f"/static/uploads/{filename}"
+            
+            data = request.form
             
             new_item = {
                 'id': next_item_id,
                 'title': data.get('title'),
                 'description': data.get('description'),
                 'category': data.get('category'),
-                'item_type': data.get('item_type'),  # 'lost' or 'found'
+                'item_type': data.get('item_type'),
                 'location': data.get('location'),
                 'contact_method': data.get('contact_method'),
                 'contact_info': data.get('contact_info', ''),
-                'image_url': data.get('image_url', ''),
+                'image_url': image_url,
                 'status': 'active',
                 'created_at': datetime.now().strftime('%Y-%m-%d %H:%M'),
                 'user_id': data.get('user_id', 'anonymous')
@@ -690,6 +727,7 @@ def create_app() -> Flask:
                 'item': new_item
             })
         except Exception as e:
+            print(f"Error reporting item: {e}", flush=True)
             return jsonify({
                 'success': False,
                 'message': str(e)
@@ -713,18 +751,31 @@ def create_app() -> Flask:
     # Resolve a lost or found item
     @app.route("/api/lost-found/items/<int:item_id>/resolve", methods=["POST"])
     def resolve_lost_found_item(item_id):
+        global lost_found_items
         item = next((item for item in lost_found_items if item['id'] == item_id), None)
         if item:
-            item['status'] = 'resolved'
+            # Remove the item from the list when resolved
+            lost_found_items = [i for i in lost_found_items if i['id'] != item_id]
             return jsonify({
                 'success': True,
-                'message': 'Item marked as resolved!'
+                'message': 'Item marked as resolved and removed!'
             })
         else:
             return jsonify({
                 'success': False,
                 'message': 'Item not found'
             }), 404
+
+    # Delete a lost or found item
+    @app.route("/api/lost-found/items/<int:item_id>", methods=["DELETE"])
+    def delete_lost_found_item(item_id):
+        global lost_found_items
+        item = next((item for item in lost_found_items if item['id'] == item_id), None)
+        if not item:
+            return jsonify({"error": "Item not found"}), 404
+        
+        lost_found_items = [i for i in lost_found_items if i['id'] != item_id]
+        return jsonify({"message": "Item deleted"}), 200
 
     # Helper functions for cafeteria
     def get_user_badge(report_count):
@@ -771,8 +822,12 @@ def create_app() -> Flask:
             }
 
     # -----------------------------
-    # Helpers: data loading & convert
+    # Helpers: File Uploads & Data Loading
     # -----------------------------
+
+    def allowed_file(filename):
+        return '.' in filename and \
+               filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
     def _safe_read_json(path: str) -> Optional[Dict[str, Any]]:
         try:
@@ -912,6 +967,11 @@ def create_app() -> Flask:
 
 
 
+    # Serve uploaded files from the UPLOAD_FOLDER
+    @app.route('/static/uploads/<filename>')
+    def uploaded_file(filename):
+        return send_from_directory(UPLOAD_FOLDER, filename)
+
     return app
 
 
@@ -923,4 +983,3 @@ if __name__ == "__main__":
     debug = os.getenv("FLASK_DEBUG", "0") == "1"
     # Bind to 0.0.0.0 for container/VM compatibility
     app.run(host="0.0.0.0", port=port, debug=debug)
-
