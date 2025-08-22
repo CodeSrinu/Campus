@@ -10,7 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
-<body class="cafeteria-page">
+<body class="events-page">
     <!-- Fixed Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top border-bottom app-navbar" id="top">
         <div class="container-fluid">
@@ -42,84 +42,118 @@
 
     <main class="mt-5 pt-4">
         <div class="container-fluid">
-            <!-- Header -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h1 class="display-4 text-center mb-3">🍽️ Campus Menu & Rush Tracker</h1>
-                    <p class="lead text-center text-muted">
-                        Check today's menu, prices, availability and expected rush clear times!
-                    </p>
-                </div>
-            </div>
+            <div class="row">
+                <!-- Sidebar -->
+                <aside class="col-lg-3 sidebar" id="sidebar">
+                    <div class="statistics">
+                        <h2>📊 Cafeteria Stats</h2>
+                        <p>Current Status: <span id="currentStatus">Medium</span></p>
+                        <p>Wait Time: <span id="waitTimeDisplay">12 min</span></p>
+                        <p>Last Updated: <span id="lastUpdated">Just now</span></p>
+                    </div>
 
-            <!-- Admin Report Section - Moved to top -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="admin-report-section">
-                        <h5>📊 Admin Report Submission</h5>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <label class="form-label" for="adminCode">Admin Code:</label>
-                                <input type="password" class="form-control admin-code-input" id="adminCode" name="adminCode" placeholder="Enter admin code" aria-label="Admin code input">
-                                <small class="text-muted">Development code: NITAP001</small>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label" for="cafeteriaSelect">Select Cafeteria:</label>
-                                <select class="form-select cafeteria-select" id="cafeteriaSelect" name="cafeteriaSelect" disabled aria-label="Cafeteria selection dropdown">
-                                    <option value="">Select cafeteria...</option>
-                                    <option value="main_cafeteria">Main Cafeteria</option>
-                                    <option value="canteen_block_a">Canteen Block A</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label" for="rushTimeRange">Expected wait time (minutes):</label>
-                                <input type="range" class="form-range" id="rushTimeRange" name="rushTimeRange" min="0" max="60" value="15" disabled aria-label="Expected wait time in minutes">
-                                <div class="d-flex justify-content-between">
-                                    <small>0 min</small>
-                                    <small id="rushTimeValue">15 min</small>
-                                    <small>60 min</small>
-                                </div>
+                    <!-- Day Filters -->
+                    <div class="day-filters">
+                        <h3>📅 Select Day</h3>
+                        <button class="day-filter" data-day="monday">
+                            <i class="bi bi-calendar"></i> Monday
+                        </button>
+                        <button class="day-filter" data-day="tuesday">
+                            <i class="bi bi-calendar"></i> Tuesday
+                        </button>
+                        <button class="day-filter active" data-day="wednesday">
+                            <i class="bi bi-calendar"></i> Wednesday
+                        </button>
+                        <button class="day-filter" data-day="thursday">
+                            <i class="bi bi-calendar"></i> Thursday
+                        </button>
+                        <button class="day-filter" data-day="friday">
+                            <i class="bi bi-calendar"></i> Friday
+                        </button>
+                        <button class="day-filter" data-day="saturday">
+                            <i class="bi bi-calendar"></i> Saturday
+                        </button>
+                        <button class="day-filter" data-day="sunday">
+                            <i class="bi bi-calendar"></i> Sunday
+                        </button>
+                    </div>
+
+                    <!-- Crowd Status -->
+                    <div class="crowd-status-sidebar">
+                        <h3>🚦 Crowd Status</h3>
+                        <div class="progress-circle" id="progressCircle">
+                            <div class="progress-inner">
+                                <span class="progress-time" id="progressTime">12min</span>
                             </div>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col-12">
-                                <button class="btn btn-primary" id="submitReportBtn" disabled>
-                                    <i class="fas fa-upload"></i> Submit Report
-                                </button>
-                                <small class="text-muted ms-2">Only authorized users can submit crowd reports</small>
-                            </div>
+                        <div class="crowd-level" id="crowdLevel">
+                            <span class="level-icon">🟡</span>
+                            <span class="level-text">Moderate Crowd</span>
+                        </div>
+                        <p class="crowd-description">Some waiting expected across campus</p>
+                    </div>
+
+                    <!-- Reporter Section -->
+                    <div class="reporter-sidebar">
+                        <h3>📝 Report Status</h3>
+                        <button class="new-reporter-btn" title="Report Crowd Status">
+                            <i class="bi bi-plus-circle"></i> New Report
+                        </button>
+                        <button class="new-reporter-btn" onclick="forceRefreshStatus()" title="Refresh Status" style="margin-top: 0.5rem; background: #4299e1;">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh Status
+                        </button>
+                        <div class="reporter-stats">
+                            <p>👑 0 points</p>
+                            <p>📊 0 reports</p>
                         </div>
                     </div>
-                </div>
-            </div>
+                </aside>
 
-            <!-- Day Selector -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card bg-light">
-                        <div class="card-body text-center">
-                            <h6 class="card-title mb-3">📅 Select Day</h6>
-                            <div class="btn-group" role="group">
-                                <button class="btn day-btn active" data-day="monday">Monday</button>
-                                <button class="btn day-btn" data-day="tuesday">Tuesday</button>
-                                <button class="btn day-btn" data-day="wednesday">Wednesday</button>
-                                <button class="btn day-btn" data-day="thursday">Thursday</button>
-                                <button class="btn day-btn" data-day="friday">Friday</button>
-                                <button class="btn day-btn" data-day="saturday">Saturday</button>
-                                <button class="btn day-btn" data-day="sunday">Sunday</button>
-                            </div>
-                            <p class="small text-muted mt-2 mb-0">Currently showing: <strong id="currentDay">Monday</strong> menu</p>
-                        </div>
+                <!-- Main Content -->
+                <div class="col-lg-9 content">
+                    <div class="controls">
+                        <button class="menu-toggle" id="menuToggle">
+                            <i class="bi bi-list"></i>
+                        </button>
+                        <h1>🍽️ Canteen Block B Menu</h1>
+                    </div>
+
+                    <!-- Menu Cards Container -->
+                    <div class="menu-container" id="menuContainer">
+                        <!-- Menu cards will be loaded here -->
+                    </div>
+
+                    <!-- Admin Controls (Hidden by default) -->
+                    <div class="admin-controls" id="adminControls" style="display: none;">
+                        <input type="password" class="admin-input" id="adminCode" placeholder="Admin Code">
+                        <input type="range" class="time-slider" id="rushTimeRange" min="0" max="45" value="12">
+                        <button class="update-btn" id="submitReportBtn">Update Status</button>
                     </div>
                 </div>
-            </div>
-
-            <!-- Cafeteria Menu Cards -->
-            <div class="row" id="cafeteria-grid">
-                <!-- Cafeteria cards will be loaded here -->
             </div>
         </div>
     </main>
+
+    <!-- Modern Fixed Footer -->
+    <footer class="fixed-footer">
+        <div class="container-fluid">
+            <div class="footer-item">
+                <div class="footer-icon low"></div>
+                <span>Low: 0-5 min</span>
+            </div>
+            <div class="footer-item">
+                <div class="footer-icon medium"></div>
+                <span>Medium: 6-15 min</span>
+            </div>
+            <div class="footer-item">
+                <div class="footer-icon high"></div>
+                <span>High: 15+ min</span>
+            </div>
+            <div class="footer-item">
+                <span>Help fellow students by reporting current crowd levels! 🤝</span>
+            </div>
+        </div>
+    </footer>
 
     <!-- Login Modal -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginLabel" aria-hidden="true">
@@ -210,14 +244,20 @@
         let userReports = {};
 
         // DOM Elements
-        const dayButtons = document.querySelectorAll('.day-btn');
-        const currentDaySpan = document.getElementById('currentDay');
-        const cafeteriaGrid = document.getElementById('cafeteria-grid');
+        const dayButtons = document.querySelectorAll('.day-filter');
+        const menuContainer = document.getElementById('menuContainer');
+        const progressCircle = document.getElementById('progressCircle');
+        const progressTime = document.getElementById('progressTime');
+        const crowdLevel = document.getElementById('crowdLevel');
         const adminCodeInput = document.getElementById('adminCode');
-        const cafeteriaSelect = document.getElementById('cafeteriaSelect');
         const rushTimeRange = document.getElementById('rushTimeRange');
-        const rushTimeValue = document.getElementById('rushTimeValue');
         const submitReportBtn = document.getElementById('submitReportBtn');
+        const footerTimestamp = document.getElementById('footerTimestamp');
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const currentStatus = document.getElementById('currentStatus');
+        const waitTimeDisplay = document.getElementById('waitTimeDisplay');
+        const lastUpdated = document.getElementById('lastUpdated');
 
         // Event Listeners
         dayButtons.forEach(btn => {
@@ -225,29 +265,146 @@
                 dayButtons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 currentDay = btn.dataset.day;
-                currentDaySpan.textContent = currentDay.charAt(0).toUpperCase() + currentDay.slice(1);
+                console.log('Day changed to:', currentDay);
                 renderCafeterias();
             });
         });
 
+        // Menu toggle for mobile
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('show');
+            });
+        }
+
         // Admin Code Verification
         adminCodeInput.addEventListener('input', verifyAdminCode);
         rushTimeRange.addEventListener('input', (e) => {
-            rushTimeValue.textContent = e.target.value + ' min';
+            // Update progress circle in real-time
+            const waitTime = parseInt(e.target.value);
+            const crowdInfo = getCrowdLevel(waitTime);
+            const percentage = Math.min((waitTime / 45) * 100, 100);
+            const degrees = (percentage / 100) * 360;
+            progressCircle.style.background = `conic-gradient(${crowdInfo.color} 0deg ${degrees}deg, #e5e7eb ${degrees}deg 360deg)`;
+            progressTime.textContent = `${waitTime}min`;
         });
+
+        // New Reporter Button
+        document.querySelector('.new-reporter-btn').addEventListener('click', () => {
+            const adminControls = document.getElementById('adminControls');
+            if (adminControls.style.display === 'none') {
+                adminControls.style.display = 'block';
+            } else {
+                adminControls.style.display = 'none';
+            }
+        });
+
+        // Get ingredients for food items (defined early for template use)
+        function getIngredients(itemName) {
+            const ingredients = {
+                'Idli Sambar': 'Rice, Urad dal, Sambar dal, Vegetables, Spices, Curry leaves, Mustard seeds',
+                'Masala Dosa': 'Rice, Urad dal, Potato filling, Onions, Spices, Coconut chutney, Sambar',
+                'Dosa': 'Rice, Urad dal, Coconut chutney, Sambar',
+                'Upma': 'Semolina, Vegetables, Mustard seeds, Curry leaves, Onions, Green chilies',
+                'Poha': 'Flattened rice, Onions, Turmeric, Mustard seeds, Peanuts, Curry leaves',
+                'Vada Sambar': 'Urad dal, Green chilies, Ginger, Curry leaves, Sambar dal, Vegetables',
+                'Uttapam': 'Rice, Urad dal, Onions, Tomatoes, Chilies, Coriander',
+                'Pongal': 'Rice, Moong dal, Black pepper, Cumin, Ghee',
+                'Rice + Dal + Sabzi': 'Basmati rice, Toor dal, Seasonal vegetables, Spices',
+                'Chicken Curry': 'Chicken, Onions, Tomatoes, Spices, Coconut milk',
+                'Paneer Butter Masala': 'Paneer, Butter, Tomatoes, Cream, Spices',
+                'Rajma Rice': 'Kidney beans, Rice, Onions, Tomatoes, Spices',
+                'Fish Curry': 'Fish, Coconut, Tamarind, Spices, Curry leaves',
+                'Aloo Gobi': 'Potatoes, Cauliflower, Turmeric, Spices',
+                'Curd Rice': 'Rice, Yogurt, Mustard seeds, Curry leaves',
+                'Mutton Curry': 'Mutton, Onions, Tomatoes, Spices, Yogurt',
+                'Dal Makhani': 'Black lentils, Butter, Cream, Tomatoes, Spices',
+                'Jeera Rice': 'Basmati rice, Cumin seeds, Ghee, Bay leaves',
+                'Samosa': 'Wheat flour, Potatoes, Peas, Spices, Oil',
+                'Pakora': 'Gram flour, Vegetables, Spices, Oil',
+                'Tea': 'Tea leaves, Milk, Sugar, Cardamom',
+                'Coffee': 'Coffee beans, Milk, Sugar',
+                'Biscuits': 'Wheat flour, Sugar, Butter, Baking powder',
+                'Chips': 'Potatoes, Oil, Salt, Spices',
+                'Bread Toast': 'Bread, Butter, Jam',
+                'Omelette': 'Eggs, Onions, Tomatoes, Spices',
+                'Biryani': 'Basmati rice, Chicken/Mutton, Saffron, Fried onions, Yogurt, Mint leaves',
+                'Fried Rice': 'Rice, Mixed vegetables, Soy sauce, Garlic, Ginger, Spring onions',
+                'Noodles': 'Wheat noodles, Cabbage, Carrots, Soy sauce, Chili sauce, Garlic',
+                'Sandwich': 'Bread slices, Cucumber, Tomato, Cheese, Mint chutney, Butter',
+                'Burger': 'Burger bun, Aloo tikki, Lettuce, Tomato, Cheese, Mayo, Ketchup',
+                'Maggi': 'Instant noodles, Vegetables, Masala, Onions, Tomatoes',
+                'Bread Toast': 'Bread slices, Butter, Jam, Sugar',
+                'Omelette': 'Eggs, Onions, Tomatoes, Green chilies, Salt, Oil',
+                'Paratha': 'Wheat flour, Oil, Salt, Stuffing (potato/paneer)',
+                'Aloo Bonda': 'Potatoes, Gram flour, Green chilies, Ginger, Curry leaves',
+                'Pongal': 'Rice, Moong dal, Black pepper, Cumin, Ghee, Cashews',
+                'Pizza': 'Pizza base, Cheese, Tomato sauce, Vegetables, Herbs',
+                'Pasta': 'Pasta, Tomato sauce, Cheese, Herbs, Garlic',
+                'French Fries': 'Potatoes, Oil, Salt, Seasoning',
+                'Cold Coffee': 'Coffee, Milk, Sugar, Ice cream, Chocolate syrup',
+                'Ice Cream': 'Milk, Sugar, Cream, Flavoring, Stabilizers',
+                'Chips': 'Potatoes, Oil, Salt, Spices',
+                'Juice': 'Fresh fruits, Water, Sugar (optional)',
+                'Pongal': 'Rice, Moong dal, Black pepper, Cumin, Ghee, Cashews',
+                'Vada Sambar': 'Urad dal, Green chilies, Ginger, Curry leaves, Sambar dal',
+                'Rava Upma': 'Semolina, Vegetables, Mustard seeds, Curry leaves, Onions',
+                'Medu Vada': 'Urad dal, Green chilies, Ginger, Curry leaves, Oil',
+                'Coconut Chutney': 'Coconut, Green chilies, Ginger, Curry leaves, Tamarind',
+                'Sambar Rice': 'Rice, Sambar dal, Vegetables, Tamarind, Spices',
+                'Dal Makhani': 'Black lentils, Butter, Cream, Tomatoes, Spices',
+                'Jeera Rice': 'Basmati rice, Cumin seeds, Ghee, Bay leaves',
+                'Pani Puri': 'Puri, Spiced water, Tamarind chutney, Potatoes, Chickpeas',
+                'Bhel Puri': 'Puffed rice, Sev, Onions, Tomatoes, Chutneys',
+                'Masala Tea': 'Tea leaves, Milk, Sugar, Cardamom, Ginger',
+                'Filter Coffee': 'Coffee powder, Milk, Sugar, Chicory',
+                'Vadapav': 'Potato dumpling, Bread bun, Green chutney, Garlic chutney',
+                'Rava Dosa': 'Rice, Urad dal, Semolina, Onions, Green chilies',
+                'Onion Uttapam': 'Rice, Urad dal, Onions, Tomatoes, Green chilies',
+                'Vermicelli Upma': 'Vermicelli, Vegetables, Mustard seeds, Curry leaves',
+                'Aval Upma': 'Flattened rice, Onions, Green chilies, Curry leaves',
+                'Tomato Chutney': 'Tomatoes, Green chilies, Ginger, Tamarind, Spices',
+                'Appam': 'Rice flour, Coconut milk, Yeast, Sugar, Salt',
+                'Puttu': 'Rice flour, Coconut, Salt, Water',
+                'Idiyappam': 'Rice flour, Salt, Water, Coconut',
+                'Kadala Curry': 'Black chickpeas, Coconut, Spices, Curry leaves',
+                'Banana': 'Fresh banana fruit'
+            };
+            return ingredients[itemName] || 'Fresh ingredients, prepared with care';
+        }
 
         // Initialize
         fetchCafeteriaData();
+
+        // Live time removed
+
+        // Initialize footer timestamp
+        updateFooterTimestamp();
+
+        // Update timestamp every minute
+        setInterval(updateFooterTimestamp, 60000);
+
+        // Auto-refresh cafeteria data every 30 seconds for testing (then 5 minutes)
+        setInterval(() => {
+            console.log('Auto-refreshing cafeteria data...');
+            fetchCafeteriaData();
+            updateCrowdStatus();
+        }, 30000); // 30 seconds for testing, change to 300000 for 5 minutes
+
+        // Manual refresh every 10 seconds for crowd status
+        setInterval(() => {
+            console.log('Updating crowd status...');
+            updateCrowdStatus();
+        }, 10000);
 
         // Admin Functions
         function verifyAdminCode() {
             const adminCode = adminCodeInput.value.trim();
             const isAdmin = adminCode === 'NITAP001';
-            
-            cafeteriaSelect.disabled = !isAdmin;
+
             rushTimeRange.disabled = !isAdmin;
             submitReportBtn.disabled = !isAdmin;
-            
+
             if (isAdmin) {
                 adminCodeInput.classList.remove('is-invalid');
                 adminCodeInput.classList.add('is-valid');
@@ -263,14 +420,8 @@
 
         // Submit Report Function
         submitReportBtn.addEventListener('click', async () => {
-            const cafeteriaId = cafeteriaSelect.value;
             const rushTime = parseInt(rushTimeRange.value);
-            
-            if (!cafeteriaId) {
-                showToast('error', 'Please select a cafeteria');
-                return;
-            }
-            
+
             try {
                 const response = await fetch('/api/cafeteria/report-crowd', {
                     method: 'POST',
@@ -278,7 +429,7 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        cafeteria_id: cafeteriaId,
+                        cafeteria_id: 'main_cafeteria', // Default to main cafeteria
                         rush_time: rushTime,
                         user_id: 'admin_user'
                     })
@@ -286,41 +437,47 @@
 
                 const result = await response.json();
                 if (result.success) {
-                    // Update local data
-                    cafeteriaData[cafeteriaId].current_rush_time = rushTime;
-                    cafeteriaData[cafeteriaId].last_updated = new Date().toLocaleTimeString('en-US', { 
-                        hour: '2-digit', 
-                        minute: '2-digit',
-                        hour12: true 
+                    // Update local data for all cafeterias
+                    Object.keys(cafeteriaData).forEach(cafeteriaId => {
+                        cafeteriaData[cafeteriaId].current_rush_time = rushTime;
+                        cafeteriaData[cafeteriaId].last_updated = new Date().toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        });
                     });
-                    
+
                     // Show success message
-                    showToast('success', result.message);
-                    
+                    showToast('success', 'Campus crowd status updated!');
+
                     // Re-render to show updated data
                     renderCafeterias();
-                    
+
                     // Reset form
-                    cafeteriaSelect.value = '';
-                    rushTimeRange.value = 15;
-                    rushTimeValue.textContent = '15 min';
+                    rushTimeRange.value = 10;
+                    rushTimeValue.textContent = '10';
                 } else {
                     showToast('error', result.message);
                 }
             } catch (error) {
                 console.error('Error reporting crowd:', error);
-                showToast('error', 'Failed to submit report. Please try again.');
+                showToast('error', 'Failed to update status. Please try again.');
             }
         });
 
         // API Functions
         async function fetchCafeteriaData() {
             try {
-                const response = await fetch('/api/cafeteria/status');
+                // Add cache-busting parameter to force fresh data
+                const timestamp = new Date().getTime();
+                const response = await fetch(`/api/cafeteria/status?t=${timestamp}`);
                 const result = await response.json();
                 if (result.success) {
                     cafeteriaData = result.data;
+                    console.log('Fresh cafeteria data loaded:', cafeteriaData);
                     renderCafeterias();
+                } else {
+                    console.error('API returned error:', result.message);
                 }
             } catch (error) {
                 console.error('Error fetching cafeteria data:', error);
@@ -329,36 +486,178 @@
 
         // Rendering Functions
         function renderCafeterias() {
-            cafeteriaGrid.innerHTML = '';
-            
-            Object.entries(cafeteriaData).forEach(([cafeteriaId, cafeteria]) => {
-                const cafeteriaCard = createCafeteriaCard(cafeteriaId, cafeteria);
-                cafeteriaGrid.appendChild(cafeteriaCard);
-            });
+            // Update crowd status
+            updateCrowdStatus();
+
+            // Render menu cards
+            renderMenuCards();
+
+            // Update footer timestamp
+            updateFooterTimestamp();
         }
+
+        function updateCrowdStatus() {
+            if (!cafeteriaData || !cafeteriaData.main_cafeteria) return;
+
+            const cafeteria = cafeteriaData.main_cafeteria;
+            let waitTime = cafeteria.current_rush_time || 12;
+
+            // Add some realistic variation based on time of day
+            const now = new Date();
+            const hour = now.getHours();
+
+            // Peak hours: 12-2 PM (lunch) and 7-9 AM (breakfast)
+            if ((hour >= 7 && hour <= 9) || (hour >= 12 && hour <= 14)) {
+                waitTime += Math.floor(Math.random() * 5) + 2; // Add 2-7 minutes during peak
+            } else if (hour >= 15 && hour <= 17) {
+                waitTime += Math.floor(Math.random() * 3) + 1; // Add 1-4 minutes during snack time
+            } else {
+                waitTime = Math.max(1, waitTime - Math.floor(Math.random() * 3)); // Reduce during off-peak
+            }
+
+            // Ensure waitTime is reasonable
+            waitTime = Math.max(1, Math.min(45, waitTime));
+            const crowdInfo = getCrowdLevel(waitTime);
+
+            // Update progress circle
+            const percentage = Math.min((waitTime / 45) * 100, 100);
+            const degrees = (percentage / 100) * 360;
+            progressCircle.style.background = `conic-gradient(${crowdInfo.color} 0deg ${degrees}deg, #e5e7eb ${degrees}deg 360deg)`;
+
+            // Update time display
+            progressTime.textContent = `${waitTime}min`;
+
+            // Update crowd level
+            crowdLevel.innerHTML = `
+                <span class="level-icon">${crowdInfo.icon}</span>
+                <span class="level-text">${crowdInfo.level} Crowd</span>
+            `;
+
+            // Update sidebar stats
+            if (currentStatus) currentStatus.textContent = crowdInfo.level;
+            if (waitTimeDisplay) waitTimeDisplay.textContent = `${waitTime} min`;
+            if (lastUpdated) lastUpdated.textContent = 'Just now';
+
+            console.log('Crowd status updated:', crowdInfo.level, waitTime + ' min');
+        }
+
+        function renderMenuCards() {
+            menuContainer.innerHTML = '';
+
+            if (!cafeteriaData || !cafeteriaData.main_cafeteria) {
+                menuContainer.innerHTML = '<p class="no-menu">No cafeteria data available</p>';
+                return;
+            }
+
+            const cafeteria = cafeteriaData.main_cafeteria;
+            const dayMenu = cafeteria.menu[currentDay];
+
+            if (!dayMenu) {
+                menuContainer.innerHTML = '<p class="no-menu">No menu available for this day</p>';
+                return;
+            }
+
+            let html = '';
+
+            // Render each meal type in events-style cards
+            ['breakfast', 'lunch', 'snacks'].forEach(mealType => {
+                if (dayMenu[mealType]) {
+                    const meal = dayMenu[mealType];
+                    html += `
+                        <div class="menu-card">
+                            <div class="menu-card-header">
+                                <h3>${mealType.charAt(0).toUpperCase() + mealType.slice(1)}</h3>
+                                <div class="time">${meal.time}</div>
+                            </div>
+                            <div class="menu-items">
+                                <div class="food-grid">
+                                    ${meal.items.map(item => `
+                                        <div class="food-item ${!item.available ? 'unavailable' : ''}"
+                                             onclick="showFoodDetails('${item.name}', ${item.price}, ${item.available}, '${item.image}')">
+                                            <img src="${item.image}" alt="${item.name}" loading="lazy">
+                                            <div class="name">${item.name}</div>
+                                            <div class="price" style="display: none;">₹${item.price}</div>
+                                            ${!item.available ? '<div class="unavailable-badge">Out of Stock</div>' : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            menuContainer.innerHTML = html;
+        }
+
+        function createModernMenuCard(cafeteriaId, cafeteria) {
+            const card = document.createElement('div');
+            card.className = 'menu-card';
+
+            const currentMenu = cafeteria.menu[currentDay];
+            if (!currentMenu) return card;
+
+            card.innerHTML = `
+                <div class="menu-header">
+                    <span class="menu-icon">${getCafeteriaIcon(cafeteriaId)}</span>
+                    <h3 class="menu-title">${cafeteria.name}</h3>
+                </div>
+
+                ${['breakfast', 'lunch', 'snacks'].filter(mealType => currentMenu[mealType]).map(mealType => {
+                    const mealData = currentMenu[mealType];
+                    return `
+                    <div class="meal-section" data-meal="${mealType}">
+                        <div class="meal-header" onclick="toggleMealSection('${cafeteriaId}', '${mealType}')">
+                            <div class="meal-info">
+                                <span class="meal-emoji">${getMealIcon(mealType)}</span>
+                                <span class="meal-name">${getMealName(mealType)}</span>
+                                <span class="meal-time">${mealData.time}</span>
+                            </div>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="food-items-grid" id="${cafeteriaId}-${mealType}-items" style="display: none;">
+                            ${mealData.items.map(item => `
+                                <div class="food-item ${!item.available ? 'unavailable' : ''}"
+                                     onclick="showFoodDetails('${item.name}', ${item.price}, ${item.available}, '${item.image}')">
+                                    <img src="${item.image}" alt="${item.name}" class="food-image">
+                                    <div class="food-name">${item.name}</div>
+                                    <div class="food-price">₹${item.price}</div>
+                                    <span class="availability-badge ${item.available ? 'available' : 'unavailable'}">
+                                        ${item.available ? '✓ Available' : '✗ Out of Stock'}
+                                    </span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    `;
+                }).join('')}
+            `;
+
+            return card;
+        }
+
+        function getCafeteriaIcon(cafeteriaId) {
+            const icons = {
+                'main_cafeteria': '🏛️',
+                'food_court': '🍽️',
+                'snack_bar': '🥪',
+                'juice_center': '🥤'
+            };
+            return icons[cafeteriaId] || '🍽️';
+        }
+
+        // updateLiveTime function removed
 
         function createCafeteriaCard(cafeteriaId, cafeteria) {
             const col = document.createElement('div');
             col.className = 'col-12 mb-5';
-            
-            const crowdLevel = getCrowdLevel(cafeteria.current_rush_time);
-            
+
             col.innerHTML = `
                 <div class="card shadow-sm cafeteria-card" data-cafeteria-id="${cafeteriaId}">
                     <div class="card-header bg-primary text-white">
                         <div class="row align-items-center">
-                            <div class="col-md-6">
-                                <h4 class="mb-0">🏢 ${cafeteria.name}</h4>
-                            </div>
-                            <div class="col-md-6 text-md-end">
-                                <div class="rush-indicator">
-                                    <span class="badge fs-6" style="background-color: ${crowdLevel.color}">
-                                        ${crowdLevel.icon} ${crowdLevel.level} Rush - ${cafeteria.current_rush_time} min
-                                    </span>
-                                </div>
-                                <small class="text-light">
-                                    ${cafeteria.last_updated ? `Updated: ${cafeteria.last_updated}` : 'No recent updates'}
-                                </small>
+                            <div class="col-12">
+                                <h4 class="mb-0 text-center">🏢 ${cafeteria.name} - Menu</h4>
                             </div>
                         </div>
                     </div>
@@ -375,42 +674,58 @@
 
         function renderMenuSections(dayMenu) {
             if (!dayMenu) return '<p class="text-muted">No menu available for this day.</p>';
-            
+
+            // Define meal order: breakfast, lunch, snacks
+            const mealOrder = ['breakfast', 'lunch', 'snacks'];
             let html = '';
-            Object.entries(dayMenu).forEach(([mealType, mealData]) => {
-                html += `
-                    <div class="meal-section mb-4">
-                        <h5 class="meal-header" onclick="toggleMealSection(this)">
-                            <span>${getMealIcon(mealType)} ${getMealName(mealType)}</span>
-                            <span class="badge bg-info">${mealData.time}</span>
-                            <button class="meal-toggle" aria-label="Toggle ${getMealName(mealType)} menu">
-                                <i class="bi bi-chevron-down"></i>
-                            </button>
-                        </h5>
-                        <div class="meal-content">
-                            <div class="row">
-                                ${mealData.items.map(item => `
-                                    <div class="col-md-6 col-lg-4 mb-3">
-                                        <div class="menu-item-card ${!item.available ? 'unavailable' : ''}">
-                                            <div class="menu-item-image">
-                                                <img src="${item.image}" alt="${item.name}" class="food-image">
-                                            </div>
-                                            <div class="menu-item-content">
-                                                <h6 class="menu-item-name">${item.name}</h6>
-                                                <p class="menu-item-price">₹${item.price}</p>
-                                                <span class="badge ${item.available ? 'bg-success' : 'bg-danger'}">
-                                                    ${item.available ? 'Available' : 'Not Available'}
-                                                </span>
+
+            mealOrder.forEach(mealType => {
+                if (dayMenu[mealType]) {
+                    const mealData = dayMenu[mealType];
+                    html += `
+                        <div class="meal-section mb-4">
+                            <h5 class="meal-header" onclick="toggleMealSection(this)">
+                                <span>${getMealIcon(mealType)} ${getMealName(mealType)}</span>
+                                <span class="badge bg-info">${mealData.time}</span>
+                                <button class="meal-toggle" aria-label="Toggle ${getMealName(mealType)} menu">
+                                    <i class="bi bi-chevron-down"></i>
+                                </button>
+                            </h5>
+                            <div class="meal-content">
+                                <div class="row">
+                                    ${mealData.items.map((item, index) => `
+                                        <div class="col-6 col-md-3 mb-3">
+                                            <div class="menu-item-card ${!item.available ? 'unavailable' : ''}" onclick="toggleItemDetails(this)">
+                                                <div class="menu-item-header">
+                                                    <h6 class="menu-item-name">${item.name}</h6>
+                                                    <span class="badge ${item.available ? 'bg-success' : 'bg-danger'}">
+                                                        ${item.available ? '✓' : '✗'}
+                                                    </span>
+                                                    <i class="bi bi-chevron-down toggle-icon"></i>
+                                                </div>
+                                                <div class="menu-item-details" style="display: none;">
+                                                    <div class="menu-item-image">
+                                                        <img src="${item.image}" alt="${item.name}" class="food-image">
+                                                    </div>
+                                                    <div class="menu-item-content">
+                                                        <p class="menu-item-price">₹${item.price}</p>
+                                                        <div class="ingredients">
+                                                            <small class="text-muted">
+                                                                <strong>Ingredients:</strong> ${getIngredients(item.name)}
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                `).join('')}
+                                    `).join('')}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             });
-            
+
             return html;
         }
 
@@ -433,21 +748,21 @@
             if (rushTime <= 5) {
                 return {
                     level: 'Low',
-                    color: '#28a745',
+                    color: '#48bb78',
                     icon: '🟢',
-                    description: 'No waiting, go now!'
+                    description: 'Quick service, minimal wait'
                 };
             } else if (rushTime <= 15) {
                 return {
                     level: 'Medium',
-                    color: '#ffc107',
+                    color: '#ed8936',
                     icon: '🟡',
-                    description: 'Short wait expected'
+                    description: 'Moderate wait expected'
                 };
             } else {
                 return {
                     level: 'High',
-                    color: '#dc3545',
+                    color: '#f56565',
                     icon: '🔴',
                     description: 'Long wait, avoid if possible'
                 };
@@ -458,7 +773,7 @@
         function toggleMealSection(header) {
             const content = header.nextElementSibling;
             const toggle = header.querySelector('.meal-toggle i');
-            
+
             if (content.classList.contains('show')) {
                 content.classList.remove('show');
                 header.classList.remove('expanded');
@@ -470,6 +785,108 @@
                 toggle.classList.remove('bi-chevron-down');
                 toggle.classList.add('bi-chevron-up');
             }
+        }
+
+        // Toggle individual menu item details
+        function toggleItemDetails(card) {
+            const details = card.querySelector('.menu-item-details');
+            const icon = card.querySelector('.toggle-icon');
+
+            if (details.style.display === 'none') {
+                details.style.display = 'block';
+                icon.classList.remove('bi-chevron-down');
+                icon.classList.add('bi-chevron-up');
+                card.classList.add('expanded');
+            } else {
+                details.style.display = 'none';
+                icon.classList.remove('bi-chevron-up');
+                icon.classList.add('bi-chevron-down');
+                card.classList.remove('expanded');
+            }
+        }
+
+
+
+        // Update footer timestamp
+        function updateFooterTimestamp() {
+            const now = new Date();
+            footerTimestamp.textContent = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
+        // Toggle meal section dropdown
+        function toggleMealSection(cafeteriaId, mealType) {
+            const itemsGrid = document.getElementById(`${cafeteriaId}-${mealType}-items`);
+            const section = document.querySelector(`[data-meal="${mealType}"]`);
+
+            if (itemsGrid.style.display === 'none') {
+                itemsGrid.style.display = 'grid';
+                section.classList.add('expanded');
+            } else {
+                itemsGrid.style.display = 'none';
+                section.classList.remove('expanded');
+            }
+        }
+
+        // Show food details modal
+        function showFoodDetails(name, price, available, image) {
+            const ingredients = getIngredients(name);
+
+            // Create modal
+            const modal = document.createElement('div');
+            modal.className = 'food-modal';
+            modal.innerHTML = `
+                <div class="food-modal-content">
+                    <div class="food-modal-header">
+                        <h3>${name}</h3>
+                        <button class="close-modal" onclick="closeFoodModal()">&times;</button>
+                    </div>
+                    <div class="food-modal-body">
+                        <img src="${image}" alt="${name}" class="food-modal-image">
+                        <div class="food-modal-info">
+                            <div class="food-modal-price">₹${price}</div>
+                            <div class="food-modal-status ${available ? 'available' : 'unavailable'}">
+                                ${available ? '✓ Available' : '✗ Out of Stock'}
+                            </div>
+                            <div class="food-modal-ingredients">
+                                <strong>Ingredients:</strong><br>
+                                ${ingredients}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            // Close on background click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeFoodModal();
+                }
+            });
+        }
+
+        function closeFoodModal() {
+            const modal = document.querySelector('.food-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Force refresh function
+        function forceRefresh() {
+            console.log('Force refreshing cafeteria data...');
+            fetchCafeteriaData();
+        }
+
+        // Force refresh status function
+        function forceRefreshStatus() {
+            console.log('Force refreshing crowd status...');
+            updateCrowdStatus();
         }
 
         // Utility Functions
@@ -533,5 +950,8 @@
             modal && modal.hide();
         });
     </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
