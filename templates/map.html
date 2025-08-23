@@ -130,34 +130,56 @@
       position: absolute;
       bottom: 20px;
       left: 20px;
-      background: rgba(15, 23, 32, 0.9);
+      background: rgba(15, 23, 32, 0.95);
       color: var(--text);
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
       z-index: 1000;
-      max-width: 250px;
+      max-width: 280px;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      backdrop-filter: blur(4px);
+      transition: all 0.3s ease;
+    }
+    
+    .location-status:hover {
+      box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+      transform: translateY(-2px);
     }
     
     .location-btn {
-      background: #3b82f6;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
       color: white;
       border: none;
-      padding: 6px 12px;
-      border-radius: 4px;
+      padding: 8px 16px;
+      border-radius: 6px;
       cursor: pointer;
-      margin-top: 8px;
-      font-size: 11px;
+      margin-top: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+      transition: all 0.2s ease;
+      width: 100%;
     }
     
-    .location-btn:hover {
-      background: #2563eb;
+    .location-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
     }
     
     .location-btn:disabled {
-      background: #6b7280;
+      background: #4b5563;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .location-status .error {
+      color: #f87171;
+      font-weight: 500;
     }
     
     .sidebar-toggle {
@@ -353,8 +375,8 @@
     
     <!-- Location Status -->
     <div class="location-status">
-      <div><strong>Location Services</strong></div>
-      <div id="locationText">Click to enable location tracking</div>
+      <div><strong><i class="bi bi-geo-alt-fill"></i> Location Tracker</strong></div>
+      <div id="locationText">Click to enable real-time location tracking</div>
       <button class="location-btn" id="locationBtn">Enable Location</button>
     </div>
   </div>
@@ -654,65 +676,141 @@
       // Update on resize
       window.addEventListener('resize', updateFilterButtonVisibility);
 
-      // Live location tracking
+      // Live location tracking with smooth movement
       let userMarker = null;
       let watchId = null;
+      let isTracking = false;
       
       const locationBtn = document.getElementById('locationBtn');
       const locationText = document.getElementById('locationText');
 
+      // Function to smoothly move the marker
+      function moveMarkerSmoothly(marker, newLatLng) {
+        if (!marker) return;
+        
+        const currentLatLng = marker.getLatLng();
+        const frames = 30; // Number of animation frames
+        const deltaLat = (newLatLng.lat - currentLatLng.lat) / frames;
+        const deltaLng = (newLatLng.lng - currentLatLng.lng) / frames;
+        
+        let frame = 0;
+        const animate = () => {
+          if (frame < frames) {
+            const intermediateLat = currentLatLng.lat + deltaLat * frame;
+            const intermediateLng = currentLatLng.lng + deltaLng * frame;
+            marker.setLatLng([intermediateLat, intermediateLng]);
+            frame++;
+            requestAnimationFrame(animate);
+          } else {
+            marker.setLatLng(newLatLng); // Ensure final position
+          }
+        };
+        animate();
+      }
+
       if (locationBtn && locationText) {
         locationBtn.addEventListener('click', () => {
-          if (navigator.geolocation) {
-            locationBtn.disabled = true;
-            locationBtn.textContent = 'Enabling...';
-            locationText.textContent = 'Requesting location access...';
+          if (!isTracking) {
+            // Start tracking
+            if (navigator.geolocation) {
+              locationBtn.disabled = true;
+              locationBtn.textContent = 'Enabling...';
+              locationText.textContent = 'Requesting location access...';
+              locationText.classList.remove('error');
 
-            // Watch user position
-            watchId = navigator.geolocation.watchPosition(
-              (position) => {
-                const { latitude, longitude } = position.coords;
-                
-                if (!userMarker) {
-                  // Create user marker
-                  userMarker = L.circleMarker([latitude, longitude], {
-                    radius: 8,
-                    fillColor: '#3b82f6',
-                    color: '#ffffff',
-                    weight: 2,
-                    fillOpacity: 0.8
-                  }).addTo(map);
+              // Watch user position
+              watchId = navigator.geolocation.watchPosition(
+                (position) => {
+                  const { latitude, longitude } = position.coords;
+                  
+                  if (!userMarker) {
+                    // Create user marker with a pulsing effect
+                    userMarker = L.circleMarker([latitude, longitude], {
+                      radius: 10,
+                      fillColor: '#3b82f6',
+                      color: '#ffffff',
+                      weight: 2,
+                      fillOpacity: 0.8,
+                      className: 'user-location-marker'
+                    }).addTo(map);
 
-                  // Add popup to user marker
-                  userMarker.bindPopup(`
-                    <div style="text-align: center;">
-                      <strong>Your Location</strong><br>
-                      <small>Lat: ${latitude.toFixed(6)}<br>Lng: ${longitude.toFixed(6)}</small>
-                    </div>
-                  `);
-                } else {
-                  // Update existing marker position smoothly
-                  userMarker.setLatLng([latitude, longitude]);
+                    // Add pulsing animation with CSS
+                    const style = document.createElement('style');
+                    style.innerHTML = `
+                      .user-location-marker {
+                        animation: pulse 2s infinite;
+                      }
+                      @keyframes pulse {
+                        0% {
+                          transform: scale(1);
+                          opacity: 0.8;
+                        }
+                        50% {
+                          transform: scale(1.2);
+                          opacity: 0.6;
+                        }
+                        100% {
+                          transform: scale(1);
+                          opacity: 0.8;
+                        }
+                      }
+                    `;
+                    document.head.appendChild(style);
+
+                    // Add popup to user marker
+                    userMarker.bindPopup(`
+                      <div style="text-align: center;">
+                        <strong>Your Location</strong><br>
+                        <small>Lat: ${latitude.toFixed(6)}<br>Lng: ${longitude.toFixed(6)}</small>
+                      </div>
+                    `);
+                  } else {
+                    // Update existing marker position smoothly
+                    moveMarkerSmoothly(userMarker, [latitude, longitude]);
+                  }
+
+                  // Update location text
+                  locationText.textContent = `Tracking active - Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`;
+                  locationText.classList.remove('error');
+                  locationBtn.textContent = 'Disable Location';
+                  locationBtn.disabled = false;
+                  isTracking = true;
+                },
+                (error) => {
+                  console.error('Geolocation error:', error);
+                  locationText.textContent = `Location error: ${error.message}`;
+                  locationText.classList.add('error');
+                  locationBtn.textContent = 'Retry';
+                  locationBtn.disabled = false;
+                  isTracking = false;
+                },
+                {
+                  enableHighAccuracy: true,
+                  timeout: 10000,
+                  maximumAge: 5000 // More frequent updates
                 }
-
-                locationText.textContent = `Tracking active - Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`;
-                locationBtn.textContent = 'Disable Location';
-                locationBtn.disabled = false;
-              },
-              (error) => {
-                locationText.textContent = `Location error: ${error.message}`;
-                locationBtn.textContent = 'Retry';
-                locationBtn.disabled = false;
-              },
-              {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 30000
-              }
-            );
+              );
+            } else {
+              locationText.textContent = 'Geolocation not supported by your browser';
+              locationText.classList.add('error');
+              locationBtn.disabled = true;
+              isTracking = false;
+            }
           } else {
-            locationText.textContent = 'Geolocation not supported';
-            locationBtn.disabled = true;
+            // Stop tracking
+            if (watchId !== null) {
+              navigator.geolocation.clearWatch(watchId);
+              watchId = null;
+            }
+            
+            if (userMarker) {
+              map.removeLayer(userMarker);
+              userMarker = null;
+            }
+            
+            locationText.textContent = 'Location tracking disabled';
+            locationBtn.textContent = 'Enable Location';
+            isTracking = false;
           }
         });
       }
