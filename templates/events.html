@@ -231,6 +231,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
     <script>
+      // API Base URL
+      const API_BASE = 'https://campus-xqcw.onrender.com';
+      
+      // Utility function for API calls
+      async function apiCall(endpoint, options = {}) {
+        const url = `${API_BASE}${endpoint}`;
+        return await fetch(url, options);
+      }
         // Event Management JavaScript
         let events = [];
         let currentFilter = 'all';
@@ -378,7 +386,7 @@
         // API Functions
         async function fetchEvents() {
             try {
-                const response = await fetch('https://campus-xqcw.onrender.com/api/events');
+                const response = await apiCall('/api/events');
                 events = await response.json();
                 
                 // If no events from API, use fake data

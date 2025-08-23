@@ -432,21 +432,21 @@
   <!-- Leaflet Routing Machine -->
   <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
   <script>
-    // Global routing control variable
-    let routingControl = null;
+    // API Base URL
+    const API_BASE = 'https://campus-xqcw.onrender.com';
+    
+    // Utility function for API calls
+    async function apiCall(endpoint, options = {}) {
+      const url = `${API_BASE}${endpoint}`;
+      return await fetch(url, options);
+    }
 
     (async function init() {
-      const statusEl = document.createElement('div');
-      statusEl.className = 'status';
-      statusEl.textContent = 'Loading map…';
-      document.body.appendChild(statusEl);
-
-      const API_BASE = 'https://campus-xqcw.onrender.com';
 
       // Fetch campus boundary data from backend
       let campusBoundary = null;
       try {
-        const res = await fetch(`${API_BASE}/api/campus/boundary`);
+        const res = await apiCall('/api/campus/boundary');
         if (!res.ok) throw new Error('Network response was not ok');
         campusBoundary = await res.json();
         console.log('Loaded campus boundary:', campusBoundary);
@@ -457,7 +457,7 @@
       // Fetch building data from backend
       let buildings = [];
       try {
-        const res = await fetch(`${API_BASE}/api/locations`);
+        const res = await apiCall('/api/locations');
         if (!res.ok) throw new Error('Network response was not ok');
         const data = await res.json();
         buildings = Array.isArray(data) ? data : [];
@@ -776,7 +776,7 @@
       // Draw roads if available
       let roadsLayer = null;
       try {
-        const roadsRes = await fetch(`${API_BASE}/api/roads`);
+        const roadsRes = await apiCall('/api/roads');
         if (roadsRes.ok) {
           const roadsData = await roadsRes.json();
           console.log('Loaded roads:', roadsData);
