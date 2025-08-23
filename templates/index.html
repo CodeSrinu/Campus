@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-<!-- Your local version -->
-<h1>Welcome to Campus App</h1>
-=======
-<!-- Remote version -->
-<h1>Campus Application - Updated UI</h1>
->>>>>>> main
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -63,14 +57,7 @@
           </div>
 
                 <!-- Centered vertical CTAs below title and content -->
-                <div class="hero-cta mt-2 d-grid gap-2 justify-content-center" id="heroCTA">
-                  <button type="button" class="btn btn-primary btn-lg hero-cta-btn" data-bs-toggle="modal" data-bs-target="#registerModal">
-                    <i class="bi bi-person-plus-fill me-2"></i>Register
-                  </button>
-                  <button type="button" class="btn btn-outline-primary btn-lg hero-cta-btn" data-bs-toggle="modal" data-bs-target="#loginModal">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>Login
-                  </button>
-                </div>
+              
 
                 <!-- Inline script to hide hero CTA immediately if user is logged in -->
                 <script>
@@ -95,187 +82,10 @@
     <!-- Feature Highlights (attractive card view) -->
     <section class="section-features pb-5">
       <div class="container">
-<<<<<<< HEAD
+
         <div class="glass-card p-3 p-md-4 rounded-4 shadow-soft">
-          <a class="feature-item requires-auth" href="/map">
-            <i class="bi bi-geo-alt icon-primary"></i>
-            <div>
-              <div class="fw-semibold">Navigation</div>
-              <div class="small text-muted">Explore campus with an interactive, branded map.</div>
-            </div>
-          </a>
-          <a class="feature-item" href="/events">
-            <i class="bi bi-calendar-event icon-primary"></i>
-            <div>
-              <div class="fw-semibold">Events</div>
-              <div class="small text-muted">Stay updated with official announcements.</div>
-            </div>
-          </a>
-          <a class="feature-item" href="/lost-found">
-            <i class="bi bi-search icon-primary"></i>
-            <div>
-              <div class="fw-semibold">Lost &amp; Found</div>
-              <div class="small text-muted">Report and recover items with privacy-first contact.</div>
-            </div>
-          </a>
-          <a class="feature-item" href="/cafeteria">
-            <div class="feature-icon">
-              <i class="bi bi-cup-hot"></i>
-            </div>
-            <div>
-              <div class="fw-semibold">Cafeteria</div>
-              <div class="small text-muted">Check daily menus, prices, and real-time crowd levels to plan your meals efficiently.</div>
-            </div>
-          </a>
-=======
-        <div class="row g-4">
-          <div class="col-12 text-center mb-4">
-            <h2 class="display-6 fw-bold mb-3">Campus Features</h2>
-            <p class="lead text-muted">Everything you need for campus life, all in one place</p>
-          </div>
+        
 
-          <!-- Navigation Card -->
-          <div class="col-md-6 col-lg-3">
-            <a class="feature-card requires-auth" href="/map">
-              <div class="feature-card-inner">
-                <div class="feature-icon-wrapper">
-                  <i class="bi bi-geo-alt feature-icon"></i>
-                </div>
-                <h4 class="feature-title">Navigation</h4>
-                <p class="feature-description">Explore campus with an interactive, branded map and find your way around easily.</p>
-                <div class="feature-arrow">
-                  <i class="bi bi-arrow-right"></i>
-                </div>
-              </div>
-            </a>
-          </div>
-
-          <!-- Events Card -->
-          <div class="col-md-6 col-lg-3">
-            <a class="feature-card" href="/events">
-              <div class="feature-card-inner">
-                <div class="feature-icon-wrapper">
-                  <i class="bi bi-calendar-event feature-icon"></i>
-                </div>
-                <h4 class="feature-title">Events</h4>
-                <p class="feature-description">Stay updated with official announcements and register for exciting campus events.</p>
-                <div class="feature-arrow">
-                  <i class="bi bi-arrow-right"></i>
-                </div>
-              </div>
-            </a>
-          </div>
-
-          <!-- Lost & Found Card -->
-          <div class="col-md-6 col-lg-3">
-            <a class="feature-card" href="/lost-found">
-              <div class="feature-card-inner">
-                <div class="feature-icon-wrapper">
-                  <i class="bi bi-search feature-icon"></i>
-                </div>
-                <h4 class="feature-title">Lost &amp; Found</h4>
-                <p class="feature-description">Report and recover items with privacy-first contact system.</p>
-                <div class="feature-arrow">
-                  <i class="bi bi-arrow-right"></i>
-                </div>
-              </div>
-            </a>
-          </div>
-
-          <!-- Cafeteria Card -->
-          <div class="col-md-6 col-lg-3">
-            <a class="feature-card" href="/cafeteria">
-              <div class="feature-card-inner">
-                <div class="feature-icon-wrapper">
-                  <i class="bi bi-cup-hot feature-icon"></i>
-                </div>
-                <h4 class="feature-title">Cafeteria</h4>
-                <p class="feature-description">Check daily menus, prices, and real-time crowd levels to plan your meals efficiently.</p>
-                <div class="feature-arrow">
-                  <i class="bi bi-arrow-right"></i>
-                </div>
-              </div>
-            </a>
-          </div>
->>>>>>> 8d08d25 (updated ui)
-        </div>
-      </div>
-    </section>
-
-    <footer class="py-4 border-top footer-bar">
-      <div class="container small text-muted d-flex flex-wrap gap-2 align-items-center">
-        <span>&copy; 2025 Smart Campus App — NIT AP</span>
-        <span class="badge rounded-pill badge-gold">MVP First</span>
-        <span class="badge rounded-pill badge-neutral">Privacy</span>
-        <span class="badge rounded-pill badge-neutral">Crowdsourcing</span>
-      </div>
-    </footer>
-  </main>
-
-  <!-- Login Modal -->
-  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="loginLabel"><i class="bi bi-box-arrow-in-right me-2"></i>Login</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="loginForm">
-            <div class="mb-3">
-              <label class="form-label">Register Number</label>
-              <input type="text" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Password</label>
-              <input type="password" class="form-control" required>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="loginBtn">Login</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Register Modal -->
-  <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="registerLabel"><i class="bi bi-person-plus-fill me-2"></i>Register</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="registerForm">
-            <div class="mb-3">
-              <label class="form-label">Register Number</label>
-              <input type="text" class="form-control" required>
-            </div>
-            <div class="row">
-              <div class="col-6 mb-3">
-                <label class="form-label">Year</label>
-                <select class="form-select" required>
-                  <option value="" selected disabled>Choose…</option>
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                </select>
-              </div>
-              <div class="col-6 mb-3">
-                <label class="form-label">Branch</label>
-                <select class="form-select" required>
-                  <option value="" selected disabled>Choose…</option>
-                  <option>CSE</option>
-                  <option>ECE</option>
-                  <option>EEE</option>
-                  <option>ME</option>
-                  <option>CE</option>
-                </select>
-              </div>
             </div>
             <div class="mb-3">
               <label class="form-label">Password</label>
