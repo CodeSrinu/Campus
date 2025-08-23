@@ -217,7 +217,7 @@
     (async function() {
       const pill = document.getElementById('status');
       try {
-        const res = await fetch('/health', { cache: 'no-store' });
+        const res = await fetch('https://campus-xqcw.onrender.com/health', { cache: 'no-store' });
         const data = await res.json();
         if (data && data.status) {
           pill.innerHTML = `<span class="me-2" style="display:inline-block;width:8px;height:8px;border-radius:999px;background:#22c55e"></span>${data.status}`;

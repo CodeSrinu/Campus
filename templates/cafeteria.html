@@ -423,7 +423,7 @@
             const rushTime = parseInt(rushTimeRange.value);
 
             try {
-                const response = await fetch('/api/cafeteria/report-crowd', {
+                const response = await fetch('https://campus-xqcw.onrender.com/api/cafeteria/report-crowd', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -470,7 +470,7 @@
             try {
                 // Add cache-busting parameter to force fresh data
                 const timestamp = new Date().getTime();
-                const response = await fetch(`/api/cafeteria/status?t=${timestamp}`);
+                const response = await fetch(`https://campus-xqcw.onrender.com/api/cafeteria/status?t=${timestamp}`);
                 const result = await response.json();
                 if (result.success) {
                     cafeteriaData = result.data;
