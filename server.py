@@ -13,6 +13,7 @@ MAX_IMAGE_FILESIZE_MB = 5 # 5 MB
 BOUNDARY_PATH = os.path.join(DATA_DIR, "campus_boundary.geojson")
 BUILDINGS_PATH = os.path.join(DATA_DIR, "buildings.geojson")
 NAV_CONFIG_PATH = os.path.join(DATA_DIR, "navigation_config.json")
+ROADS_PATH = os.path.join(DATA_DIR, "roads.geojson")
 
 # In-memory storage for events
 events = [
@@ -470,6 +471,14 @@ def create_app() -> Flask:
             if str(loc.get("id")) == str(loc_id):
                 return jsonify(loc), 200
         return jsonify({"error": "Location not found"}), 404
+
+
+
+    @app.route("/api/roads", methods=["GET"])
+    def get_roads():
+        """API endpoint to get roads data."""
+        roads = _load_roads()
+        return jsonify(roads), 200
 
 
 
@@ -1004,6 +1013,44 @@ def create_app() -> Flask:
                     "coordinates": ring,
                     "description": str(props.get("description") or ""),
                     "imageUrl": str(props.get("imageUrl") or ""),
+                })
+        return feats
+
+    def _load_roads() -> List[Dict[str, Any]]:
+        """Load roads data from GeoJSON file."""
+        data = _safe_read_json(ROADS_PATH)
+        if not data:
+            return []
+
+        feats: List[Dict[str, Any]] = []
+        if data.get("type") == "FeatureCollection":
+            for feat in data.get("features", []):
+                geom = feat.get("geometry", {})
+                props = feat.get("properties", {})
+                
+                # Convert coordinates to lat/lng format
+                coords = _geojson_outer_ring_to_latlng(geom)
+                if not coords:
+                    continue
+                    
+                feats.append({
+                    "id": str(props.get("id", len(feats) + 1)),
+                    "name": str(props.get("name", f"Road {len(feats) + 1}")),
+                    "coordinates": coords,
+                    "type": geom.get("type", "LineString")
+                })
+        elif data.get("type") == "Feature":
+            geom = data.get("geometry", {})
+            props = data.get("properties", {})
+            
+            # Convert coordinates to lat/lng format
+            coords = _geojson_outer_ring_to_latlng(geom)
+            if coords:
+                feats.append({
+                    "id": str(props.get("id", "1")),
+                    "name": str(props.get("name", "Road")),
+                    "coordinates": coords,
+                    "type": geom.get("type", "LineString")
                 })
         return feats
 
