@@ -18,12 +18,20 @@
   />
   <style>
     :root {
-      --bg: #0b0f14;
-      --panel: #0f1720;
-      --text: #e6edf3;
-      --muted: #94a3b8;
-      --mask: rgba(80, 94, 108, 0.65);
-      --stroke: rgba(255, 255, 255, 0.9);
+      /* Your Custom Color Scheme */
+      --primary-color: #0C3545;
+      --secondary-color: #8C7570;
+      --background-color: #F8FBFA;
+      --accent-color: #007BFF;
+      --text-color: #0C3545;
+
+      /* Map specific colors */
+      --bg: var(--background-color);
+      --panel: var(--primary-color);
+      --text: var(--text-color);
+      --muted: var(--secondary-color);
+      --mask: rgba(12, 53, 69, 0.65);
+      --stroke: rgba(12, 53, 69, 0.9);
     }
     html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text); }
     #app { height: 100%; display: grid; grid-template-rows: auto 1fr; }

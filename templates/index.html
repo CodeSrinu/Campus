@@ -10,6 +10,166 @@
   <!-- App Styles -->
   <link href="/static/style.css" rel="stylesheet" />
 
+  <!-- Feature Cards Styles -->
+  <style>
+      /* Feature Cards Styling */
+      .feature-card {
+          display: block;
+          height: 100%;
+          color: inherit;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .feature-card-inner {
+          background: linear-gradient(135deg, #ffffff 0%, #F8FBFA 100%);
+          border: 1px solid rgba(12, 53, 69, 0.1);
+          border-radius: 20px;
+          padding: 2rem;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 4px 20px rgba(12, 53, 69, 0.08);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .feature-card-inner::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, #0C3545, #007BFF, #8C7570);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+      }
+
+      .feature-card:hover .feature-card-inner {
+          transform: translateY(-8px);
+          box-shadow: 0 20px 40px rgba(12, 53, 69, 0.15);
+          border-color: rgba(12, 53, 69, 0.2);
+      }
+
+      .feature-card:hover .feature-card-inner::before {
+          opacity: 1;
+      }
+
+      .feature-icon-wrapper {
+          width: 70px;
+          height: 70px;
+          background: linear-gradient(135deg, #0C3545 0%, #007BFF 100%);
+          border-radius: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1.5rem;
+          transition: all 0.3s ease;
+          box-shadow: 0 8px 25px rgba(12, 53, 69, 0.3);
+      }
+
+      .feature-card:hover .feature-icon-wrapper {
+          transform: scale(1.1) rotate(5deg);
+          box-shadow: 0 12px 35px rgba(12, 53, 69, 0.4);
+      }
+
+      .feature-icon {
+          font-size: 1.8rem;
+          color: white;
+          transition: all 0.3s ease;
+      }
+
+      .feature-content {
+          flex: 1;
+          margin-bottom: 1rem;
+      }
+
+      .feature-title {
+          font-size: 1.4rem;
+          font-weight: 700;
+          color: #0C3545;
+          margin-bottom: 0.75rem;
+          transition: color 0.3s ease;
+      }
+
+      .feature-card:hover .feature-title {
+          color: #007BFF;
+      }
+
+      .feature-description {
+          color: #8C7570;
+          font-size: 0.95rem;
+          line-height: 1.6;
+          margin: 0;
+          transition: color 0.3s ease;
+      }
+
+      .feature-card:hover .feature-description {
+          color: #0C3545;
+      }
+
+      .feature-arrow {
+          align-self: flex-end;
+          width: 40px;
+          height: 40px;
+          background: rgba(12, 53, 69, 0.1);
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+      }
+
+      .feature-card:hover .feature-arrow {
+          background: #0C3545;
+          transform: translateX(5px);
+      }
+
+      .feature-arrow i {
+          font-size: 1.1rem;
+          color: #0C3545;
+          transition: all 0.3s ease;
+      }
+
+      .feature-card:hover .feature-arrow i {
+          color: white;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+          .feature-card-inner {
+              padding: 1.5rem;
+          }
+
+          .feature-icon-wrapper {
+              width: 60px;
+              height: 60px;
+              margin-bottom: 1rem;
+          }
+
+          .feature-icon {
+              font-size: 1.5rem;
+          }
+
+          .feature-title {
+              font-size: 1.25rem;
+          }
+
+          .feature-description {
+              font-size: 0.9rem;
+          }
+      }
+
+      /* Section header styling */
+      .display-6 {
+          background: linear-gradient(135deg, #0C3545 0%, #007BFF 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+      }
+  </style>
+
 </head>
 <body class="bg-body">
   <!-- Fixed Navbar -->
@@ -67,7 +227,7 @@
       <div class="container">
         <div class="row align-items-center g-4">
           <div class="col-12 col-lg-7">
-            <h1 class="display-5 fw-bold mb-3 hero-title">Your Campus, Simplified.</h1>
+            <h1 class="display-5 fw-bold mb-3 hero-title">Your Smart Campus</h1>
             <p class="lead mb-4 hero-sub">
               The one-stop app for all your campus needs. From finding events to tracking your grievances, connect to your campus like never before.
             </p>
@@ -96,38 +256,134 @@
     </section>
 
 
-    <!-- Feature Highlights (soft panel) -->
-    <section class="section-features pb-5">
+    <!-- Features Section -->
+    <section class="py-5 bg-light">
       <div class="container">
-        <div class="glass-card p-3 p-md-4 rounded-4 shadow-soft">
-          <a class="feature-item requires-auth" href="/map">
-            <i class="bi bi-geo-alt icon-primary"></i>
-            <div>
-              <div class="fw-semibold">Navigation</div>
-              <div class="small text-muted">Explore campus with an interactive, branded map.</div>
+        <div class="row justify-content-center mb-4">
+          <div class="col-lg-8 text-center">
+            <h2 class="display-6 fw-bold mb-3">Campus Features</h2>
+            <p class="lead text-muted">Everything you need for your campus life, all in one place</p>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <!-- Navigation Card -->
+          <div class="col-12 col-md-6">
+            <a href="/map" class="feature-card requires-auth text-decoration-none">
+              <div class="feature-card-inner">
+                <div class="feature-icon-wrapper">
+                  <i class="bi bi-geo-alt feature-icon"></i>
+                </div>
+                <div class="feature-content">
+                  <h3 class="feature-title">Navigation</h3>
+                  <p class="feature-description">Explore campus with an interactive, branded map and find your way around easily.</p>
+                </div>
+                <div class="feature-arrow">
+                  <i class="bi bi-arrow-right"></i>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- Events Card -->
+          <div class="col-12 col-md-6">
+            <a href="/events" class="feature-card text-decoration-none">
+              <div class="feature-card-inner">
+                <div class="feature-icon-wrapper">
+                  <i class="bi bi-calendar-event feature-icon"></i>
+                </div>
+                <div class="feature-content">
+                  <h3 class="feature-title">Events</h3>
+                  <p class="feature-description">Stay updated with official announcements and never miss important campus events.</p>
+                </div>
+                <div class="feature-arrow">
+                  <i class="bi bi-arrow-right"></i>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- Lost & Found Card -->
+          <div class="col-12 col-md-6">
+            <a href="/lost-found" class="feature-card text-decoration-none">
+              <div class="feature-card-inner">
+                <div class="feature-icon-wrapper">
+                  <i class="bi bi-search feature-icon"></i>
+                </div>
+                <div class="feature-content">
+                  <h3 class="feature-title">Lost &amp; Found</h3>
+                  <p class="feature-description">Report and recover items with privacy-first contact system for secure communication.</p>
+                </div>
+                <div class="feature-arrow">
+                  <i class="bi bi-arrow-right"></i>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- Cafeteria Card -->
+          <div class="col-12 col-md-6">
+            <a href="/cafeteria" class="feature-card text-decoration-none">
+              <div class="feature-card-inner">
+                <div class="feature-icon-wrapper">
+                  <i class="bi bi-cup-hot feature-icon"></i>
+                </div>
+                <div class="feature-content">
+                  <h3 class="feature-title">Cafeteria</h3>
+                  <p class="feature-description">Check daily menus, prices, and real-time crowd levels to plan your meals efficiently.</p>
+                </div>
+                <div class="feature-arrow">
+                  <i class="bi bi-arrow-right"></i>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI Assistant Section -->
+    <section class="py-5 bg-white">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="text-center mb-4">
+              <h2 class="display-6 fw-bold mb-3">🤖 AI Campus Assistant</h2>
+              <p class="lead text-muted">Ask questions about campus life, get help with academics, or chat about anything!</p>
             </div>
-          </a>
-          <a class="feature-item" href="/events">
-            <i class="bi bi-calendar-event icon-primary"></i>
-            <div>
-              <div class="fw-semibold">Events</div>
-              <div class="small text-muted">Stay updated with official announcements.</div>
+
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <div class="mb-3">
+                  <label for="aiInput" class="form-label">Ask the AI Assistant:</label>
+                  <textarea class="form-control" id="aiInput" rows="3" placeholder="Hello AI, can you help me with campus information?"></textarea>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                  <button class="btn btn-primary" id="sendAIRequest">
+                    <i class="bi bi-send"></i> Send Message
+                  </button>
+                  <button class="btn btn-outline-secondary" id="clearAIChat">
+                    <i class="bi bi-trash"></i> Clear
+                  </button>
+                </div>
+
+                <!-- Loading State -->
+                <div id="aiLoading" class="text-center mt-3" style="display: none;">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  <p class="mt-2 text-muted">AI is thinking...</p>
+                </div>
+
+                <!-- Response Area -->
+                <div id="aiResponse" class="mt-3"></div>
+
+                <!-- Error Area -->
+                <div id="aiError" class="mt-3"></div>
+              </div>
             </div>
-          </a>
-          <a class="feature-item" href="/lost-found">
-            <i class="bi bi-search icon-primary"></i>
-            <div>
-              <div class="fw-semibold">Lost &amp; Found</div>
-              <div class="small text-muted">Report and recover items with privacy-first contact.</div>
-            </div>
-          </a>
-          <a class="feature-item" href="/cafeteria">
-            <div class="feature-icon">
-              <i class="bi bi-cup-hot"></i>
-            </div>
-            <h3>Cafeteria</h3>
-            <p>Check daily menus, prices, and real-time crowd levels to plan your meals efficiently.</p>
-          </a>
+          </div>
         </div>
       </div>
     </section>
@@ -658,6 +914,149 @@
 
     // Initialize authentication status on page load
     checkAuthStatus();
+
+    // AI Service Integration
+    class AIService {
+        constructor(baseUrl = 'http://127.0.0.1:8000') {
+            this.baseUrl = baseUrl;
+        }
+
+        async predict(text, options = {}) {
+            const requestData = {
+                text: text,
+                ...options
+            };
+
+            try {
+                console.log('Sending AI request:', requestData);
+
+                const response = await fetch(`${this.baseUrl}/predict`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('AI response:', data);
+                return data;
+
+            } catch (error) {
+                console.error('AI Service Error:', error);
+                throw new Error(`AI prediction failed: ${error.message}`);
+            }
+        }
+
+        async analyzeText(text) {
+            return this.predict(text, { task: 'analysis' });
+        }
+
+        async generateResponse(text) {
+            return this.predict(text, { task: 'generation' });
+        }
+    }
+
+    // Initialize AI service
+    const aiService = new AIService();
+
+    // AI UI Functions
+    function showLoadingState() {
+        const loadingEl = document.getElementById('aiLoading');
+        if (loadingEl) {
+            loadingEl.style.display = 'block';
+        }
+    }
+
+    function hideLoadingState() {
+        const loadingEl = document.getElementById('aiLoading');
+        if (loadingEl) {
+            loadingEl.style.display = 'none';
+        }
+    }
+
+    function displayAIResponse(data) {
+        const responseEl = document.getElementById('aiResponse');
+        if (responseEl) {
+            responseEl.innerHTML = `
+                <div class="alert alert-success">
+                    <h5><i class="bi bi-robot"></i> AI Response:</h5>
+                    <p>${data.response || data.prediction || JSON.stringify(data, null, 2)}</p>
+                    <small class="text-muted">Response time: ${new Date().toLocaleTimeString()}</small>
+                </div>
+            `;
+        }
+    }
+
+    function showErrorMessage(message) {
+        const errorEl = document.getElementById('aiError');
+        if (errorEl) {
+            errorEl.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong><i class="bi bi-exclamation-triangle"></i> Error:</strong> ${message}
+                </div>
+            `;
+        }
+    }
+
+    function clearAIChat() {
+        document.getElementById('aiInput').value = '';
+        document.getElementById('aiResponse').innerHTML = '';
+        document.getElementById('aiError').innerHTML = '';
+    }
+
+    // AI Request Handler
+    async function handleAIRequest() {
+        const inputEl = document.getElementById('aiInput');
+        const inputText = inputEl.value.trim();
+
+        if (!inputText) {
+            showErrorMessage('Please enter a message to send to the AI.');
+            return;
+        }
+
+        // Clear previous responses
+        document.getElementById('aiError').innerHTML = '';
+
+        showLoadingState();
+
+        try {
+            const result = await aiService.predict(inputText);
+            displayAIResponse(result);
+        } catch (error) {
+            showErrorMessage(error.message);
+        } finally {
+            hideLoadingState();
+        }
+    }
+
+    // Event Listeners for AI Section
+    document.addEventListener('DOMContentLoaded', function() {
+        const sendBtn = document.getElementById('sendAIRequest');
+        const clearBtn = document.getElementById('clearAIChat');
+        const inputEl = document.getElementById('aiInput');
+
+        if (sendBtn) {
+            sendBtn.addEventListener('click', handleAIRequest);
+        }
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', clearAIChat);
+        }
+
+        if (inputEl) {
+            inputEl.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    handleAIRequest();
+                }
+            });
+        }
+    });
   </script>
 </body>
 </html>

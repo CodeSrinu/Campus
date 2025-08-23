@@ -9,6 +9,45 @@
     <!-- Bootstrap CSS & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Custom Color Scheme -->
+    <style>
+        :root {
+            --primary-color: #0C3545;
+            --secondary-color: #8C7570;
+            --background-color: #F8FBFA;
+            --accent-color: #007BFF;
+            --text-color: #0C3545;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .btn-success {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .navbar-light .navbar-nav .nav-link.active {
+            color: var(--accent-color) !important;
+        }
+    </style>
 </head>
 <body class="lost-found-page">
     <!-- Fixed Navbar -->
@@ -28,14 +67,7 @@
                     <li class="nav-item"><a class="nav-link active" href="/lost-found"><i class="bi bi-search me-1"></i>Lost & Found</a></li>
                     <li class="nav-item"><a class="nav-link" href="/cafeteria"><i class="bi bi-cup-hot me-1"></i>Cafeteria</a></li>
                 </ul>
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
-                        <i class="bi bi-box-arrow-in-right me-1"></i>Login
-                    </button>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
-                        <i class="bi bi-person-plus-fill me-1"></i>Register
-                    </button>
-                </div>
+                <!-- Login buttons removed as requested -->
             </div>
         </div>
     </nav>
@@ -208,6 +240,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" id="deleteItemBtn" style="display: none;">
+                        <i class="bi bi-trash"></i> Remove Item
+                    </button>
                     <button type="button" class="btn btn-success" id="resolveItemBtn" style="display: none;">
                         <i class="bi bi-check-circle"></i> Mark as Resolved
                     </button>
@@ -316,6 +351,7 @@
         const submitReportBtn = document.getElementById('submitReportBtn');
         const reportItemForm = document.getElementById('reportItemForm');
         const resolveItemBtn = document.getElementById('resolveItemBtn');
+        const deleteItemBtn = document.getElementById('deleteItemBtn');
 
         // Event Listeners
         filterForm.addEventListener('submit', handleFilterSubmit);
@@ -324,6 +360,7 @@
         searchInput.addEventListener('input', handleFilterChange);
         submitReportBtn.addEventListener('click', handleReportSubmit);
         resolveItemBtn.addEventListener('click', handleResolveItem);
+        deleteItemBtn.addEventListener('click', handleDeleteItem);
 
         // Initialize
         fetchItems();
@@ -373,28 +410,76 @@
         }
 
         async function handleReportSubmit() {
+            // Validate form before submission
+            if (!reportItemForm.checkValidity()) {
+                reportItemForm.reportValidity();
+                return;
+            }
+
+            // Get form data
             const formData = new FormData(reportItemForm);
-            const data = {
-                title: formData.get('title'),
-                description: formData.get('description'),
-                category: formData.get('category'),
-                item_type: formData.get('item_type'),
-                location: formData.get('location'),
-                contact_method: formData.get('contact_method'),
-                contact_info: formData.get('contact_info'),
-                user_id: 'anonymous' // For now, using anonymous
-            };
+
+            // Additional validation
+            const title = formData.get('title');
+            const itemType = formData.get('item_type');
+            const category = formData.get('category');
+            const location = formData.get('location');
+            const description = formData.get('description');
+            const contactMethod = formData.get('contact_method');
+
+            if (!title || !itemType || !category || !location || !description || !contactMethod) {
+                showToast('error', 'Please fill in all required fields');
+                return;
+            }
+
+            // Validate contact info if not anonymous
+            if (contactMethod === 'email' && !formData.get('contact_info')) {
+                showToast('error', 'Please provide contact information for email method');
+                return;
+            }
+
+            // Validate file if uploaded
+            const imageFile = formData.get('image');
+            if (imageFile && imageFile.size > 0) {
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                if (!allowedTypes.includes(imageFile.type)) {
+                    showToast('error', 'Please upload a valid image file (JPEG, PNG, GIF)');
+                    return;
+                }
+
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (imageFile.size > maxSize) {
+                    showToast('error', 'Image file size must be less than 5MB');
+                    return;
+                }
+            }
+
+            // Show loading state
+            const submitBtn = document.getElementById('submitReportBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Submitting...';
+            submitBtn.disabled = true;
 
             try {
+                console.log('Submitting form data:', Object.fromEntries(formData.entries()));
+
                 const response = await fetch('/api/lost-found/report', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
+                    body: formData // FormData automatically sets Content-Type header
                 });
 
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Server error response:', errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
                 const result = await response.json();
+                console.log('Server response:', result);
+
                 if (result.success) {
                     showToast('success', result.message);
                     reportItemForm.reset();
@@ -402,11 +487,40 @@
                     modal.hide();
                     fetchItems(); // Refresh the list
                 } else {
-                    showToast('error', result.message);
+                    showToast('error', result.message || 'Failed to submit report');
                 }
             } catch (error) {
                 console.error('Error reporting item:', error);
-                showToast('error', 'Failed to submit report');
+                showToast('error', `Failed to submit report: ${error.message}`);
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function handleDeleteItem() {
+            const itemId = deleteItemBtn.dataset.itemId;
+            if (!confirm('Are you sure you want to remove this item? This action cannot be undone.')) {
+                return;
+            }
+            try {
+                const response = await fetch(`/api/lost-found/items/${itemId}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+                if (result.message) {
+                    showToast('success', result.message);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('itemDetailModal'));
+                    modal.hide();
+                    fetchItems(); // Refresh the list
+                } else {
+                    showToast('error', result.error || 'Failed to delete item');
+                }
+            } catch (error) {
+                console.error('Error deleting item:', error);
+                showToast('error', 'Failed to delete item');
             }
         }
 
@@ -550,12 +664,15 @@
                 </div>
             `;
 
-            // Show/hide resolve button based on item status
+            // Show/hide resolve and delete buttons based on item status
             if (item.status === 'active') {
                 resolveItemBtn.style.display = 'block';
                 resolveItemBtn.dataset.itemId = item.id;
+                deleteItemBtn.style.display = 'block';
+                deleteItemBtn.dataset.itemId = item.id;
             } else {
                 resolveItemBtn.style.display = 'none';
+                deleteItemBtn.style.display = 'none';
             }
 
             const modal = new bootstrap.Modal(document.getElementById('itemDetailModal'));
