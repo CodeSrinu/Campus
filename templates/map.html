@@ -441,7 +441,7 @@
       statusEl.textContent = 'Loading map…';
       document.body.appendChild(statusEl);
 
-      const API_BASE = (location.protocol === 'file:') ? 'https://campus-xqcw.onrender.com' : location.origin;
+      const API_BASE = 'https://campus-xqcw.onrender.com';
 
       // Fetch campus boundary data from backend
       let campusBoundary = null;

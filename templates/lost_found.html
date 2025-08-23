@@ -283,7 +283,7 @@
         // API Functions
         async function fetchItems() {
             try {
-                const response = await fetch('/api/lost-found/items');
+                const response = await fetch('https://campus-xqcw.onrender.com/api/lost-found/items');
                 const result = await response.json();
                 if (result.success) {
                     currentItems = result.data;
@@ -302,7 +302,7 @@
             // FormData handles the content type automatically for file uploads and form fields.
 
             try {
-                const response = await fetch('/api/lost-found/report', {
+                const response = await fetch('https://campus-xqcw.onrender.com/api/lost-found/report', {
                     method: 'POST',
                     body: formData // FormData automatically sets Content-Type header
                 });
@@ -329,7 +329,7 @@
                 return;
             }
             try {
-                const response = await fetch(`/api/lost-found/items/${itemId}`, {
+                const response = await fetch(`https://campus-xqcw.onrender.com/api/lost-found/items/${itemId}`, {
                     method: 'DELETE'
                 });
 
@@ -351,7 +351,7 @@
         async function handleResolveItem() {
             const itemId = resolveItemBtn.dataset.itemId;
             try {
-                const response = await fetch(`/api/lost-found/items/${itemId}/resolve`, {
+                const response = await fetch(`https://campus-xqcw.onrender.com/api/lost-found/items/${itemId}/resolve`, {
                     method: 'POST'
                 });
 
