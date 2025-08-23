@@ -302,6 +302,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
     <script>
+      // API Base URL
+      const API_BASE = 'https://campus-xqcw.onrender.com';
+      
+      // Utility function for API calls
+      async function apiCall(endpoint, options = {}) {
+        const url = `${API_BASE}${endpoint}`;
+        return await fetch(url, options);
+      }
         // Lost & Found Management JavaScript
         let currentItems = [];
         let currentFilters = {
@@ -365,7 +373,7 @@
         // API Functions
         async function fetchItems() {
             try {
-                const response = await fetch('https://campus-xqcw.onrender.com/api/lost-found/items');
+                const response = await apiCall('/api/lost-found/items');
                 const result = await response.json();
                 if (result.success) {
                     currentItems = result.data;
@@ -384,7 +392,7 @@
             // FormData handles the content type automatically for file uploads and form fields.
 
             try {
-                const response = await fetch('https://campus-xqcw.onrender.com/api/lost-found/report', {
+                const response = await apiCall('/api/lost-found/report', {
                     method: 'POST',
                     body: formData // FormData automatically sets Content-Type header
                 });
@@ -411,7 +419,7 @@
                 return;
             }
             try {
-                const response = await fetch(`https://campus-xqcw.onrender.com/api/lost-found/items/${itemId}`, {
+                const response = await apiCall(`/api/lost-found/items/${itemId}`, {
                     method: 'DELETE'
                 });
 
@@ -433,7 +441,7 @@
         async function handleResolveItem() {
             const itemId = resolveItemBtn.dataset.itemId;
             try {
-                const response = await fetch(`https://campus-xqcw.onrender.com/api/lost-found/items/${itemId}/resolve`, {
+                const response = await apiCall(`/api/lost-found/items/${itemId}/resolve`, {
                     method: 'POST'
                 });
 
