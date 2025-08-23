@@ -100,8 +100,10 @@
             <div class="feature-icon">
               <i class="bi bi-cup-hot"></i>
             </div>
-            <h3>Cafeteria</h3>
-            <p>Check daily menus, prices, and real-time crowd levels to plan your meals efficiently.</p>
+            <div>
+              <div class="fw-semibold">Cafeteria</div>
+              <div class="small text-muted">Check daily menus, prices, and real-time crowd levels to plan your meals efficiently.</div>
+            </div>
           </a>
         </div>
       </div>
@@ -209,19 +211,7 @@
     document.documentElement.style.setProperty('--bs-body-bg', '#f7f9fc');
     document.documentElement.style.setProperty('--bs-body-color', '#0f172a');
 
-    // Coming soon links
-    document.querySelectorAll('[data-coming]').forEach(el => {
-      el.addEventListener('click', (e) => {
-        e.preventDefault();
-        const toast = document.createElement('div');
-        toast.className = 'toast align-items-center text-bg-light border-0 show position-fixed bottom-0 start-50 translate-middle-x mb-4 shadow';
-        toast.role = 'alert';
-        toast.style.minWidth = '260px';
-        toast.innerHTML = `<div class="d-flex"><div class="toast-body"><i class="bi bi-info-circle me-2" style="color:#4b0082"></i>Section coming soon!</div><button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>`;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2500);
-      });
-    });
+    // Coming soon links - removed to allow navigation to all sections
 
     // Health pill
     (async function() {
