@@ -334,6 +334,10 @@ cafeteria_data = {
 user_reports = {}
 crowd_history = {}
 
+# User management system
+users = {}  # In-memory user storage: {register_number: {password, year, branch, created_at}}
+user_sessions = {}  # Simple session management: {session_id: register_number}
+
 
 
 
@@ -353,7 +357,84 @@ def create_app() -> Flask:
     # Enable CORS for all routes (adjust origins for production as needed)
     CORS(app, resources={r"/*": {"origins": "*"}})
 
+    # -----------------------------
+    # User Management Routes
+    # -----------------------------
 
+    @app.route("/api/auth/register", methods=["POST"])
+    def register_user():
+        """Register a new user"""
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"success": False, "message": "No data provided"}), 400
+
+        register_number = data.get('register_number', '').strip()
+        password = data.get('password', '').strip()
+        year = data.get('year', '').strip()
+        branch = data.get('branch', '').strip()
+
+        # Validate required fields
+        if not all([register_number, password, year, branch]):
+            return jsonify({"success": False, "message": "All fields are required"}), 400
+
+        # Check if user already exists
+        if register_number in users:
+            return jsonify({"success": False, "message": "User already exists"}), 400
+
+        # Create new user
+        users[register_number] = {
+            'password': password,  # In production, this should be hashed
+            'year': year,
+            'branch': branch,
+            'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+
+        return jsonify({
+            "success": True,
+            "message": "Account created successfully!",
+            "user": {
+                "register_number": register_number,
+                "year": year,
+                "branch": branch
+            }
+        }), 201
+
+    @app.route("/api/auth/login", methods=["POST"])
+    def login_user():
+        """Login user"""
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"success": False, "message": "No data provided"}), 400
+
+        register_number = data.get('register_number', '').strip()
+        password = data.get('password', '').strip()
+
+        # Validate required fields
+        if not all([register_number, password]):
+            return jsonify({"success": False, "message": "Register number and password are required"}), 400
+
+        # Check if user exists and password matches
+        if register_number not in users or users[register_number]['password'] != password:
+            return jsonify({"success": False, "message": "Invalid credentials"}), 401
+
+        # Create simple session (in production, use proper session management)
+        import uuid
+        session_id = str(uuid.uuid4())
+        user_sessions[session_id] = register_number
+
+        user_info = users[register_number]
+        return jsonify({
+            "success": True,
+            "message": "Login successful!",
+            "session_id": session_id,
+            "user": {
+                "register_number": register_number,
+                "year": user_info['year'],
+                "branch": user_info['branch']
+            }
+        }), 200
 
     @app.route("/health", methods=["GET"])
     def health():

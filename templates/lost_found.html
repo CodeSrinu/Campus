@@ -29,12 +29,7 @@
                     <li class="nav-item"><a class="nav-link" href="/cafeteria"><i class="bi bi-cup-hot me-1"></i>Cafeteria</a></li>
                 </ul>
                 <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
-                        <i class="bi bi-box-arrow-in-right me-1"></i>Login
-                    </button>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
-                        <i class="bi bi-person-plus-fill me-1"></i>Register
-                    </button>
+                    <!-- Login/Register buttons removed from lost-found page -->
                 </div>
             </div>
         </div>
@@ -219,84 +214,7 @@
         </div>
     </div>
 
-    <!-- Login Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loginLabel"><i class="bi bi-box-arrow-in-right me-2"></i>Login</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="loginForm">
-                        <div class="mb-3">
-                            <label class="form-label" for="loginRollNumber">Register Number</label>
-                            <input type="text" class="form-control" id="loginRollNumber" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="loginPassword">Password</label>
-                            <input type="password" class="form-control" id="loginPassword" required>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="loginBtn">Login</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Register Modal -->
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="registerLabel"><i class="bi bi-person-plus-fill me-2"></i>Register</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="registerForm">
-                        <div class="mb-3">
-                            <label class="form-label" for="registerRollNumber">Register Number</label>
-                            <input type="text" class="form-control" id="registerRollNumber" required>
-                        </div>
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <label class="form-label" for="registerYear">Year</label>
-                                <select class="form-select" id="registerYear" required>
-                                    <option value="" selected disabled>Choose…</option>
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                </select>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <label class="form-label" for="registerBranch">Branch</label>
-                                <select class="form-select" id="registerBranch" required>
-                                    <option value="" selected disabled>Choose…</option>
-                                    <option>CSE</option>
-                                    <option>ECE</option>
-                                    <option>EEE</option>
-                                    <option>ME</option>
-                                    <option>CE</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="registerPassword">Password</label>
-                            <input type="password" class="form-control" id="registerPassword" required>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="createAccountBtn">Create Account</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Modals removed from lost-found page -->
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -604,33 +522,7 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
-        // Protected routes (prototype)
-        let isLoggedIn = false;
-        function protectNavigation(e){
-            if(!isLoggedIn){
-                e.preventDefault();
-                const regModal = new bootstrap.Modal(document.getElementById('registerModal'));
-                regModal.show();
-            }
-        }
-        document.querySelectorAll('.requires-auth').forEach(el=>{
-            el.addEventListener('click', protectNavigation);
-        });
-
-        // Flip auth on successful login/register in prototype
-        document.getElementById('createAccountBtn').addEventListener('click', () => {
-            isLoggedIn = true;
-            alert('Account created successfully!');
-            const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
-            modal && modal.hide();
-        });
-        
-        document.getElementById('loginBtn').addEventListener('click', () => {
-            isLoggedIn = true;
-            alert('Logged in!');
-            const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-            modal && modal.hide();
-        });
+        // Authentication removed from lost-found page - handled on home page
     </script>
 </body>
 </html>
