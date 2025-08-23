@@ -16,6 +16,8 @@
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin=""
   />
+  <!-- Leaflet Routing Machine -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
   <style>
     :root {
       --bg: #0b0f14;
@@ -92,6 +94,10 @@
       color: var(--text);
       transition: all 0.2s ease;
       cursor: pointer;
+    }
+    
+    .leaflet-interactive {
+      transition: fill-opacity 0.3s ease, stroke-width 0.3s ease;
     }
     
     .building-btn:hover {
@@ -177,6 +183,14 @@
       box-shadow: none;
     }
     
+    #clearRouteBtn {
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+    }
+    
+    #clearRouteBtn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #4b5563, #374151);
+    }
+    
     .location-status .error {
       color: #f87171;
       font-weight: 500;
@@ -196,8 +210,30 @@
       cursor: pointer;
     }
     
-    .filter-section {
-      margin-bottom: 20px;
+    .map-control-btn {
+      background: rgba(15, 23, 32, 0.9);
+      border: 1px solid #1e293b;
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s ease;
+      backdrop-filter: blur(4px);
+    }
+    
+    .map-control-btn:hover {
+      background: rgba(25, 35, 45, 0.95);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+    
+    .map-control-btn:active {
+      transform: translateY(0);
+    }
+    
+    .map-control-btn i {
+      font-size: 16px;
     }
 
     .filter-label {
@@ -371,6 +407,11 @@
       <button class="sidebar-toggle" id="mapFilterToggle" style="position: absolute; top: 10px; right: 10px; z-index: 999; display: none;">
         <i class="bi bi-funnel"></i> Filter
       </button>
+      
+      <!-- Re-center button -->
+      <button id="recenterBtn" class="map-control-btn" title="Re-center to your location" style="position: absolute; bottom: 20px; right: 20px; z-index: 1000; display: none;">
+        <i class="bi bi-crosshair"></i>
+      </button>
     </div>
     
     <!-- Location Status -->
@@ -378,6 +419,7 @@
       <div><strong><i class="bi bi-geo-alt-fill"></i> Location Tracker</strong></div>
       <div id="locationText">Click to enable real-time location tracking</div>
       <button class="location-btn" id="locationBtn">Enable Location</button>
+      <button class="location-btn" id="clearRouteBtn" style="margin-top: 8px;">Clear Route</button>
     </div>
   </div>
 
@@ -387,14 +429,19 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""
   ></script>
+  <!-- Leaflet Routing Machine -->
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
   <script>
+    // Global routing control variable
+    let routingControl = null;
+
     (async function init() {
       const statusEl = document.createElement('div');
       statusEl.className = 'status';
       statusEl.textContent = 'Loading map…';
       document.body.appendChild(statusEl);
 
-      const API_BASE = (location.protocol === 'file:') ? 'http://localhost:5000' : location.origin;
+      const API_BASE = (location.protocol === 'file:') ? 'https://campus-xqcw.onrender.com' : location.origin;
 
       // Fetch campus boundary data from backend
       let campusBoundary = null;
@@ -502,6 +549,11 @@
             <p style="margin: 0; color: #374151; line-height: 1.5;">
               ${escapeHtml(description)}
             </p>
+            <div style="margin-top: 15px; text-align: center;">
+              <button class="btn btn-primary btn-sm view-3d-btn" data-building-id="${building.id || name}" data-building-name="${escapeHtml(name)}">
+                <i class="bi bi-box"></i> View in 3D
+              </button>
+            </div>
           </div>
         `;
 
@@ -511,6 +563,11 @@
         buildingLayers.set(name, {
           shadow: shadowPolygon,
           main: buildingPolygon
+        });
+
+        // Add click event to building polygon
+        buildingPolygon.on('click', () => {
+          routeToBuilding(name);
         });
 
         // Create sidebar button
@@ -525,20 +582,125 @@
 
         // Add click event to sidebar button
         buildingItem.querySelector('.building-btn').addEventListener('click', () => {
-          const bounds = buildingLayers.get(name).main.getBounds();
-          map.flyToBounds(bounds, { 
-            duration: 1.5,
-            padding: [50, 50]
-          });
-          
-          // Open popup after animation
-          setTimeout(() => {
-            buildingLayers.get(name).main.openPopup();
-          }, 1500);
+          routeToBuilding(name);
+        });
+
+        // Add hover effect to building polygon
+        buildingPolygon.on('mouseover', () => {
+          buildingPolygon.setStyle({ fillOpacity: 0.95, weight: 3 });
+        });
+        
+        buildingPolygon.on('mouseout', () => {
+          buildingPolygon.setStyle({ fillOpacity: 0.85, weight: 2 });
         });
 
         buildingListEl.appendChild(buildingItem);
       });
+
+      // Function to handle building routing
+      function routeToBuilding(buildingName) {
+        const buildingLayer = buildingLayers.get(buildingName);
+        if (!buildingLayer) return;
+        
+        // Get the center of the building as the destination
+        const destination = buildingLayer.main.getBounds().getCenter();
+        
+        // First, zoom to the building and show its popup with smooth easing
+        const bounds = buildingLayer.main.getBounds();
+        map.flyToBounds(bounds, { 
+          duration: 1.2,
+          padding: [50, 50],
+          animate: true,
+          easeLinearity: 0.2
+        });
+        
+        // Open popup with a slight delay for better visual flow
+        setTimeout(() => {
+          buildingLayer.main.openPopup();
+        }, 1000);
+        
+        // After showing the building, calculate and display the route with smooth transitions
+        setTimeout(() => {
+          // If routing control already exists, remove it with fade out
+          if (routingControl) {
+            // Try to fade out existing route
+            try {
+              const routeLines = document.querySelectorAll('.leaflet-routing-line');
+              routeLines.forEach(line => {
+                line.style.transition = 'opacity 0.3s ease';
+                line.style.opacity = '0';
+              });
+            } catch (e) {
+              // Fallback if we can't access the route lines directly
+            }
+            
+            // Remove after fade
+            setTimeout(() => {
+              if (routingControl) {
+                map.removeControl(routingControl);
+                routingControl = null;
+              }
+            }, 300);
+          }
+          
+          // Get user's current location
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                const userLocation = L.latLng(position.coords.latitude, position.coords.longitude);
+                
+                // Create new routing control with shortest path algorithm
+                routingControl = L.Routing.control({
+                  waypoints: [
+                    userLocation,
+                    destination
+                  ],
+                  routeWhileDragging: false,
+                  show: false, // Hide the instruction panel
+                  createMarker: function() { return null; }, // Don't create markers
+                  lineOptions: {
+                    styles: [
+                      {color: '#ffffff', opacity: 0.8, weight: 6}, // White outline
+                      {color: '#4b0082', opacity: 0.8, weight: 4}  // Purple route
+                    ]
+                  },
+                  router: L.Routing.osrmv1({
+                    serviceUrl: 'https://router.project-osrm.org/route/v1',
+                    profile: 'walking', // Use walking for shortest path on campus
+                    suppressDemoServerWarning: true
+                  }),
+                  fitSelectedRoutes: false, // We'll handle fitting manually for better control
+                  autoRoute: true
+                });
+                
+                // Add routing control to map
+                routingControl.addTo(map);
+                
+                // Smoothly fit the map to show both the route and building with easing
+                setTimeout(() => {
+                  if (routingControl) {
+                    const routeBounds = L.latLngBounds([userLocation, destination]);
+                    map.flyToBounds(routeBounds, {
+                      duration: 1.8,
+                      padding: [100, 100],
+                      animate: true,
+                      easeLinearity: 0.25
+                    });
+                  }
+                }, 600);
+              },
+              (error) => {
+                console.error('Geolocation error:', error);
+              },
+              {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000
+              }
+            );
+          }
+        }, 2200); // Wait 2.2 seconds after showing the building before showing the route
+      }
 
       // Category filter functionality
       const categoryFilter = document.getElementById('categoryFilter');
@@ -611,6 +773,42 @@
         console.log('Campus boundary drawn:', campusBoundary.coordinates.length, 'points');
       }
 
+      // Draw roads if available
+      let roadsLayer = null;
+      try {
+        const roadsRes = await fetch(`${API_BASE}/api/roads`);
+        if (roadsRes.ok) {
+          const roadsData = await roadsRes.json();
+          console.log('Loaded roads:', roadsData);
+          
+          // Create a separate pane for roads to control layering
+          map.createPane('roads');
+          map.getPane('roads').style.zIndex = 350; // Between background and buildings
+          
+          // Draw each road as a subtle gray line
+          roadsData.forEach((road, index) => {
+            if (road.coordinates && road.coordinates.length > 0) {
+              const roadLine = L.polyline(road.coordinates, {
+                pane: 'roads',
+                color: '#888888', // Light darkish gray color
+                weight: 2, // Thin line as requested
+                opacity: 0.6, // More subtle
+                smoothFactor: 1
+              }).addTo(map);
+              
+              // Add popup with road name if available
+              if (road.name) {
+                roadLine.bindPopup(`<b>Road</b><br>${escapeHtml(road.name)}`);
+              }
+            }
+          });
+          
+          console.log(`Drawn ${roadsData.length} roads on map`);
+        }
+      } catch (err) {
+        console.error('Roads fetch failed:', err);
+      }
+
       // Fit map to show all buildings with proper padding
       if (buildings.length > 0) {
         const bounds = L.latLngBounds([]);
@@ -680,9 +878,11 @@
       let userMarker = null;
       let watchId = null;
       let isTracking = false;
+      let lastKnownLocation = null; // Store the user's last known coordinates
       
       const locationBtn = document.getElementById('locationBtn');
       const locationText = document.getElementById('locationText');
+      const clearRouteBtn = document.getElementById('clearRouteBtn');
 
       // Function to smoothly move the marker
       function moveMarkerSmoothly(marker, newLatLng) {
@@ -722,6 +922,9 @@
               watchId = navigator.geolocation.watchPosition(
                 (position) => {
                   const { latitude, longitude } = position.coords;
+                  
+                  // Store the last known location
+                  lastKnownLocation = L.latLng(latitude, longitude);
                   
                   if (!userMarker) {
                     // Create user marker with a pulsing effect
@@ -775,6 +978,12 @@
                   locationBtn.textContent = 'Disable Location';
                   locationBtn.disabled = false;
                   isTracking = true;
+                  
+                  // Show re-center button when we have a location
+                  const recenterBtn = document.getElementById('recenterBtn');
+                  if (recenterBtn) {
+                    recenterBtn.style.display = 'block';
+                  }
                 },
                 (error) => {
                   console.error('Geolocation error:', error);
@@ -797,23 +1006,94 @@
               isTracking = false;
             }
           } else {
-            // Stop tracking
-            if (watchId !== null) {
-              navigator.geolocation.clearWatch(watchId);
-              watchId = null;
+              // Stop tracking
+              if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+              }
+              
+              if (userMarker) {
+                map.removeLayer(userMarker);
+                userMarker = null;
+              }
+              
+              // Clear last known location and hide re-center button
+              lastKnownLocation = null;
+              const recenterBtn = document.getElementById('recenterBtn');
+              if (recenterBtn) {
+                recenterBtn.style.display = 'none';
+              }
+              
+              locationText.textContent = 'Location tracking disabled';
+              locationBtn.textContent = 'Enable Location';
+              isTracking = false;
             }
-            
-            if (userMarker) {
-              map.removeLayer(userMarker);
-              userMarker = null;
-            }
-            
-            locationText.textContent = 'Location tracking disabled';
-            locationBtn.textContent = 'Enable Location';
-            isTracking = false;
+        });
+      }
+
+      // Add event listener for clear route button
+      if (clearRouteBtn) {
+        clearRouteBtn.addEventListener('click', () => {
+          clearRoute();
+        });
+      }
+
+      // Add event listener for re-center button
+      const recenterBtn = document.getElementById('recenterBtn');
+      if (recenterBtn) {
+        recenterBtn.addEventListener('click', () => {
+          if (lastKnownLocation) {
+            map.flyTo(lastKnownLocation, map.getZoom(), {
+              animate: true,
+              duration: 1.5,
+              easeLinearity: 0.25
+            });
           }
         });
       }
+
+      // Add event listener for 3D view buttons (using event delegation)
+      document.addEventListener('click', function(e) {
+        if (e.target.closest('.view-3d-btn')) {
+          const button = e.target.closest('.view-3d-btn');
+          const buildingId = button.getAttribute('data-building-id');
+          const buildingName = button.getAttribute('data-building-name');
+          
+          // Create placeholder content for 3D view
+          const content = `
+            <div class="text-center p-4">
+              <h3><i class="bi bi-box"></i> 3D View of ${escapeHtml(buildingName)}</h3>
+              <div class="mt-4">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; height: 400px; display: flex; align-items: center; justify-content: center; color: white;">
+                  <div>
+                    <i class="bi bi-building" style="font-size: 4rem;"></i>
+                    <p class="mt-3" style="font-size: 1.2rem;">Interactive 3D Model of ${escapeHtml(buildingName)}</p>
+                    <p class="mt-2" style="opacity: 0.8;">This is a placeholder for a future 3D visualization feature.</p>
+                    <div class="mt-4">
+                      <button class="btn btn-light me-2"><i class="bi bi-arrow-clockwise"></i> Rotate</button>
+                      <button class="btn btn-light me-2"><i class="bi bi-zoom-in"></i> Zoom</button>
+                      <button class="btn btn-light"><i class="bi bi-fullscreen"></i> Fullscreen</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-3 text-muted">
+                  <small><i class="bi bi-info-circle"></i> In a full implementation, this would show an interactive 3D model of the building.</small>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          // Insert content into modal
+          const modalContent = document.getElementById('modal-3d-content');
+          if (modalContent) {
+            modalContent.innerHTML = content;
+          }
+          
+          // Open Bootstrap modal
+          const modal = new bootstrap.Modal(document.getElementById('modal3DView'));
+          modal.show();
+        }
+      });
 
       // Utility functions
       function getCategoryColor(category) {
@@ -882,5 +1162,36 @@
 
     })();
   </script>
+  
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  
+  <!-- 3D View Modal -->
+  <div class="modal fade" id="modal3DView" tabindex="-1" aria-labelledby="modal3DViewLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal3DViewLabel">3D Building View</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="modal-3d-content">
+            <!-- 3D content will be loaded here -->
+            <div class="d-flex justify-content-center align-items-center" style="height: 400px;">
+              <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading 3D view...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
