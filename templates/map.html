@@ -34,14 +34,264 @@
       --stroke: rgba(12, 53, 69, 0.9);
     }
     html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text); }
-    #app { height: 100%; display: grid; grid-template-rows: auto 1fr; }
-    header { padding: 10px 14px; background: var(--panel); border-bottom: 1px solid #1e293b; display: flex; align-items: center; gap: 10px; }
-    header h1 { font-size: 16px; margin: 0; font-weight: 600; letter-spacing: 0.3px; }
-    header .sub { font-size: 12px; color: var(--muted); }
-    #map { height: 100%; width: 100%; }
+    #app { 
+      height: 100%; 
+      display: grid; 
+      grid-template-columns: 300px 1fr;
+      grid-template-rows: auto 1fr;
+    }
+    
+    header { 
+      grid-column: 1 / -1;
+      padding: 10px 14px; 
+      background: var(--panel); 
+      border-bottom: 1px solid #1e293b; 
+      display: flex; 
+      align-items: center; 
+      gap: 10px; 
+    }
+    
+    header h1 { 
+      font-size: 16px; 
+      margin: 0; 
+      font-weight: 600; 
+      letter-spacing: 0.3px; 
+    }
+    
+    header .sub { 
+      font-size: 12px; 
+      color: var(--muted); 
+    }
+    
+    #sidebar {
+      background: var(--panel);
+      border-right: 1px solid #1e293b;
+      padding: 20px;
+      overflow-y: auto;
+      height: 100%;
+    }
+    
+    .sidebar-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text);
+      border-bottom: 2px solid #3b82f6;
+      padding-bottom: 10px;
+    }
+    
+    .building-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .building-item {
+      margin-bottom: 12px;
+    }
+    
+    .building-btn {
+      width: 100%;
+      text-align: left;
+      padding: 12px 16px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 8px;
+      color: var(--text);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    
+    .building-btn:hover {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.5);
+      transform: translateY(-1px);
+    }
+    
+    .building-btn:active {
+      transform: translateY(0);
+    }
+    
+    .building-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    
+    .building-category {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    #map { 
+      height: 100%; 
+      width: 100%; 
+    }
     .status { position: absolute; top: 10px; right: 10px; background: rgba(15, 23, 32, 0.9); color: var(--text); padding: 8px 10px; border-radius: 8px; font-size: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); z-index: 1000; }
     .error { color: #fecaca; }
+    .success { color: #86efac; }
     .leaflet-container { background: #0b0f14; }
+    
+    .location-status {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(15, 23, 32, 0.9);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      z-index: 1000;
+      max-width: 250px;
+    }
+    
+    .location-btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 8px;
+      font-size: 11px;
+    }
+    
+    .location-btn:hover {
+      background: #2563eb;
+    }
+    
+    .location-btn:disabled {
+      background: #6b7280;
+      cursor: not-allowed;
+    }
+    
+    .sidebar-toggle {
+      display: none;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1001;
+      background: var(--panel);
+      border: 1px solid #1e293b;
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    
+    .filter-section {
+      margin-bottom: 20px;
+    }
+
+    .filter-label {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .category-filter {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #3b82f6;
+      border-radius: 6px;
+      background-color: var(--panel);
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .category-filter:hover {
+      background-color: #1a202c;
+      border-color: #63b3ed;
+    }
+
+    .category-filter:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #63b3ed;
+    }
+    
+    @media (max-width: 768px) {
+      #app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+      }
+      
+      #map {
+        margin-top: 50px; /* Space for navbar */
+        height: calc(100vh - 50px); /* Full viewport height minus navbar */
+      }
+      
+      /* Compact filter section for mobile */
+      #sidebar {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1000;
+        background: var(--panel);
+        padding: 15px;
+        padding-top: 80px; /* Space for fixed filter section */
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: none;
+      }
+      
+      #sidebar.visible {
+        display: block;
+      }
+      
+      .sidebar-toggle {
+        display: block !important;
+      }
+      
+      /* Fixed filter section for mobile */
+      .filter-section {
+        position: fixed;
+        top: 65px;
+        left: 15px;
+        right: 15px;
+        background: var(--panel);
+        padding: 10px;
+        border: 1px solid #1e293b;
+        border-radius: 6px;
+        z-index: 1002;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+      
+      .filter-label {
+        font-size: 12px;
+        margin-bottom: 5px;
+      }
+      
+      .category-filter {
+        font-size: 14px;
+        padding: 6px 10px;
+      }
+      
+      /* Adjust building list for mobile */
+      .building-list {
+        margin-top: 60px; /* Space for filter section */
+      }
+      
+      .building-btn {
+        padding: 12px;
+        margin-bottom: 8px;
+      }
+      
+      .building-name {
+        font-size: 14px;
+      }
+      
+      .building-category {
+        font-size: 11px;
+      }
+    }
   </style>
 </head>
 <body class="map-page">
@@ -67,9 +317,54 @@
   <div id="app" class="pt-5 mt-4">
     <header class="px-3">
       <h1>smart campus App — Navigation</h1>
-      <div class="sub">Branded map with highlighted buildings</div>
+      <div class="sub">Interactive campus map with building navigation</div>
     </header>
-    <div id="map" class="map-container"></div>
+    
+    <!-- Sidebar Toggle Button for Mobile -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+      <i class="bi bi-list"></i> Buildings
+    </button>
+    
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <button class="sidebar-close" id="sidebarClose" style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--text); font-size: 20px; cursor: pointer;">&times;</button>
+      <div class="sidebar-title">
+        <i class="bi bi-building"></i> Campus Buildings
+      </div>
+      
+      <!-- Filter Dropdown (always visible) -->
+      <div class="filter-section">
+        <label for="categoryFilter" class="filter-label">Filter by Category:</label>
+        <select id="categoryFilter" class="category-filter">
+          <option value="">All Categories</option>
+          <option value="Academic">Academic</option>
+          <option value="Admin">Admin</option>
+          <option value="Facility">Facility</option>
+          <option value="Hostel">Hostel</option>
+          <option value="Sports">Sports</option>
+          <option value="General">General</option>
+        </select>
+      </div>
+      
+      <ul class="building-list" id="buildingList">
+        <!-- Buildings will be populated dynamically -->
+      </ul>
+    </div>
+    
+    <!-- Map Container -->
+    <div id="map" class="map-container">
+      <!-- Floating filter button on map for mobile quick access -->
+      <button class="sidebar-toggle" id="mapFilterToggle" style="position: absolute; top: 10px; right: 10px; z-index: 999; display: none;">
+        <i class="bi bi-funnel"></i> Filter
+      </button>
+    </div>
+    
+    <!-- Location Status -->
+    <div class="location-status">
+      <div><strong>Location Services</strong></div>
+      <div id="locationText">Click to enable location tracking</div>
+      <button class="location-btn" id="locationBtn">Enable Location</button>
+    </div>
   </div>
 
   <!-- Leaflet JS -->
@@ -87,31 +382,43 @@
 
       const API_BASE = (location.protocol === 'file:') ? 'http://localhost:5000' : location.origin;
 
-      // Single combined fetch for config, boundary, locations
-      let boundary, locations, config;
+      // Fetch campus boundary data from backend
+      let campusBoundary = null;
       try {
-        const res = await fetch(`${API_BASE}/api/navigation/all`);
+        const res = await fetch(`${API_BASE}/api/campus/boundary`);
+        if (!res.ok) throw new Error('Network response was not ok');
+        campusBoundary = await res.json();
+        console.log('Loaded campus boundary:', campusBoundary);
+      } catch (err) {
+        console.error('Campus boundary fetch failed:', err);
+      }
+
+      // Fetch building data from backend
+      let buildings = [];
+      try {
+        const res = await fetch(`${API_BASE}/api/locations`);
         if (!res.ok) throw new Error('Network response was not ok');
         const data = await res.json();
-        boundary = data?.boundary || {};
-        locations = Array.isArray(data?.locations) ? data.locations : [];
-        config = data?.config || {};
+        buildings = Array.isArray(data) ? data : [];
+        console.log('Loaded buildings:', buildings);
+        statusEl.textContent = `Loaded ${buildings.length} buildings`;
+        statusEl.classList.add('success');
       } catch (err) {
-        statusEl.textContent = 'Failed to load data from backend.';
+        statusEl.textContent = 'Failed to load buildings from backend.';
         statusEl.classList.add('error');
-        console.error('Data fetch failed:', err);
+        console.error('Buildings fetch failed:', err);
         return;
       }
 
-      // 2) Initialize Leaflet map
-      const map = L.map('map', { preferCanvas: true, zoomControl: true });
-      const center = Array.isArray(config.center) ? config.center : null;
-      const defaultZoom = Number.isFinite(config.defaultZoom) ? config.defaultZoom : 17;
-      if (center) {
-        map.setView(center, defaultZoom);
-      }
+      // Initialize Leaflet map
+      const map = L.map('map', { 
+        preferCanvas: true, 
+        zoomControl: true,
+        center: [16.83, 81.53], // Default center for NIT campus
+        zoom: 17
+      });
 
-      // Minimalist, professional basemap (Carto Positron)
+      // Professional basemap
       const tiles = L.tileLayer(
         'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
         {
@@ -122,81 +429,368 @@
       ).addTo(map);
 
       // Create panes for layering
-      map.createPane('mask');
-      map.getPane('mask').style.zIndex = 350; // below buildings
       map.createPane('buildings');
       map.getPane('buildings').style.zIndex = 400;
 
-      // 3) Fit map to campus boundary
-      const campusCoords = Array.isArray(boundary?.coordinates) ? boundary.coordinates : [];
-      if (campusCoords.length >= 3) {
-        const bounds = L.latLngBounds(campusCoords);
-        map.fitBounds(bounds.pad(0.2));
-      } else {
-        map.setView([0, 0], 2);
-      }
+      // Store building references for interaction
+      const buildingLayers = new Map();
+      const buildingListEl = document.getElementById('buildingList');
 
-      // 4) Campus Block mask: world rectangle with a hole for campus boundary
-      const worldRing = [
-        [-85, -180],
-        [-85,  180],
-        [ 85,  180],
-        [ 85, -180],
-        [-85, -180]
-      ];
-      if (campusCoords.length >= 3) {
-        L.polygon([worldRing, campusCoords], {
-          pane: 'mask',
-          fill: true,
-          fillColor: getComputedStyle(document.documentElement).getPropertyValue('--mask') || 'rgba(80,94,108,0.65)',
-          fillOpacity: 0.65,
-          color: 'transparent',
-          weight: 0,
-          interactive: false,
-          bubblingMouseEvents: false,
-          fillRule: 'evenodd'
-        }).addTo(map);
-      }
+      // Draw buildings and bind popups
+      console.log('Starting to draw buildings:', buildings.length);
+      buildings.forEach((building, index) => {
+        const coords = building.coordinates || [];
+        console.log(`Building ${index + 1}:`, building.name, 'Coords:', coords.length, 'points');
+        if (coords.length < 3) {
+          console.log(`Skipping building ${index + 1}: not enough coordinates`);
+          return;
+        }
 
-      // 5) Draw building polygons and bind popups
-      const categoryColors = {
-        Academic: '#2563eb',
-        Admin: '#f59e0b',
-        Hostel: '#10b981',
-        Facility: '#8b5cf6',
-        Sports: '#ef4444',
-        General: '#3b82f6'
-      };
+        const name = building.name || `Building ${index + 1}`;
+        const description = building.description || 'No description available';
+        const category = building.category || 'General';
+        const imageUrl = building.imageUrl || 'https://placehold.co/300x200?text=Building';
 
-      (locations || []).forEach((b) => {
-        const coords = Array.isArray(b?.coordinates) ? b.coordinates : [];
-        if (coords.length < 3) return;
-        const name = b?.name || 'Building';
-        const desc = b?.description || '';
-        const category = b?.category || 'General';
-        const fill = categoryColors[category] || categoryColors.General;
-
-        const poly = L.polygon(coords, {
+        // Create building polygon with visible borders and shadow effect
+        // Shadow layer (drawn first to appear behind)
+        const shadowPolygon = L.polygon(coords, {
           pane: 'buildings',
-          color: 'white',
-          weight: 1,
-          fillColor: fill,
+          color: 'rgba(0, 0, 0, 0.3)',
+          weight: 4,
+          opacity: 0.4,
+          fillColor: 'rgba(0, 0, 0, 0.15)',
+          fillOpacity: 0.2,
+          interactive: false // Shadow doesn't respond to mouse events
+        }).addTo(map);
+        
+        // Main building layer (drawn on top of shadow)
+        const buildingPolygon = L.polygon(coords, {
+          pane: 'buildings',
+          color: '#ffffff',
+          weight: 2,
+          opacity: 1,
+          fillColor: getCategoryColor(category),
           fillOpacity: 0.85
         }).addTo(map);
+        
+        console.log(`Created polygon for ${name}:`, buildingPolygon.getBounds());
 
-        poly.bindPopup(`<strong>${escapeHtml(name)}</strong><br>${escapeHtml(desc)}`);
+        // Create popup content
+        const popupContent = `
+          <div style="min-width: 250px; max-width: 280px;">
+            <div style="text-align: center; margin-bottom: 15px;">
+              <img src="${imageUrl}" alt="${name}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px;">
+            </div>
+            <h4 style="margin: 0 0 10px 0; color: #1f2937;">${escapeHtml(name)}</h4>
+            <p style="margin: 0 0 10px 0; color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; background-color: ${getCategoryColor(category)}; display: inline-block; padding: 4px 8px; border-radius: 4px; color: #000;">
+              ${escapeHtml(category)}
+            </p>
+            <p style="margin: 0; color: #374151; line-height: 1.5;">
+              ${escapeHtml(description)}
+            </p>
+          </div>
+        `;
+
+        buildingPolygon.bindPopup(popupContent);
+
+        // Store reference for interaction (store both shadow and main building)
+        buildingLayers.set(name, {
+          shadow: shadowPolygon,
+          main: buildingPolygon
+        });
+
+        // Create sidebar button
+        const buildingItem = document.createElement('li');
+        buildingItem.className = 'building-item';
+        buildingItem.innerHTML = `
+          <button class="building-btn" data-building="${name}">
+            <div class="building-name">${escapeHtml(name)}</div>
+            <div class="building-category">${escapeHtml(category)}</div>
+          </button>
+        `;
+
+        // Add click event to sidebar button
+        buildingItem.querySelector('.building-btn').addEventListener('click', () => {
+          const bounds = buildingLayers.get(name).main.getBounds();
+          map.flyToBounds(bounds, { 
+            duration: 1.5,
+            padding: [50, 50]
+          });
+          
+          // Open popup after animation
+          setTimeout(() => {
+            buildingLayers.get(name).main.openPopup();
+          }, 1500);
+        });
+
+        buildingListEl.appendChild(buildingItem);
       });
 
-      statusEl.textContent = 'Loaded.';
-      setTimeout(() => statusEl.remove(), 1200);
+      // Category filter functionality
+      const categoryFilter = document.getElementById('categoryFilter');
+      if (categoryFilter) {
+        categoryFilter.addEventListener('change', () => {
+          const selectedCategory = categoryFilter.value;
+          const buildingItems = buildingListEl.querySelectorAll('.building-item');
+          
+          buildingItems.forEach((item, index) => {
+            const building = buildings[index];
+            if (!building) return;
+            
+            if (!selectedCategory || building.category === selectedCategory) {
+              item.style.display = 'block';
+              // Show building on map
+              const buildingLayer = buildingLayers.get(building.name);
+              if (buildingLayer) {
+                if (buildingLayer.shadow) {
+                  buildingLayer.shadow.setStyle({ opacity: 0.4, fillOpacity: 0.2 });
+                }
+                if (buildingLayer.main) {
+                  buildingLayer.main.setStyle({ opacity: 1, fillOpacity: 0.85 });
+                }
+              }
+            } else {
+              item.style.display = 'none';
+              // Hide building on map
+              const buildingLayer = buildingLayers.get(building.name);
+              if (buildingLayer) {
+                if (buildingLayer.shadow) {
+                  buildingLayer.shadow.setStyle({ opacity: 0.1, fillOpacity: 0.05 });
+                }
+                if (buildingLayer.main) {
+                  buildingLayer.main.setStyle({ opacity: 0.2, fillOpacity: 0.1 });
+                }
+              }
+            }
+          });
+        });
+      }
+      
+      // Sidebar toggle for mobile
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      const mapFilterToggle = document.getElementById('mapFilterToggle');
+      const sidebarClose = document.getElementById('sidebarClose');
+      const sidebar = document.getElementById('sidebar');
+
+      // Draw campus boundary if available
+      let boundaryLayer = null;
+      if (campusBoundary && campusBoundary.coordinates && campusBoundary.coordinates.length > 0) {
+        // Create a world polygon with a hole for the campus (creates a dimming effect outside)
+        const worldBounds = [[-90, -180], [90, -180], [90, 180], [-90, 180]];
+        // Create polygon with hole - world bounds as outer ring, campus boundary as inner ring (hole)
+        const maskingPolygon = L.polygon([worldBounds, campusBoundary.coordinates], {
+          color: 'transparent',
+          fillColor: '#000000', // Black fill
+          fillOpacity: 0.25, // Subtle dimming effect
+          weight: 0,
+          interactive: false // Disable interactions
+        }).addTo(map);
+        
+        // Create the campus boundary with a subtle dark border
+        boundaryLayer = L.polygon(campusBoundary.coordinates, {
+          color: '#333333', // Dark gray border with less intensity
+          weight: 2, // Thinner border
+          opacity: 0.7, // Less intense
+          fillColor: 'transparent',
+        }).addTo(map);
+        
+        console.log('Campus boundary drawn:', campusBoundary.coordinates.length, 'points');
+      }
+
+      // Fit map to show all buildings with proper padding
+      if (buildings.length > 0) {
+        const bounds = L.latLngBounds([]);
+        buildings.forEach(building => {
+          if (building.coordinates && building.coordinates.length > 0) {
+            bounds.extend(building.coordinates);
+          }
+        });
+        if (bounds.isValid()) {
+          map.fitBounds(bounds.pad(0.2));
+        }
+      }
+      
+      if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', () => {
+          sidebar.classList.toggle('visible');
+        });
+        
+        if (sidebarClose) {
+          sidebarClose.addEventListener('click', () => {
+            sidebar.classList.remove('visible');
+          });
+        }
+        
+        // Close sidebar when clicking on a building
+        document.addEventListener('click', (e) => {
+          if (e.target.closest('.building-btn') && sidebar.classList.contains('visible')) {
+            // Give time for the building to be selected before closing
+            setTimeout(() => {
+              sidebar.classList.remove('visible');
+            }, 500);
+          }
+        });
+      }
+      
+      // Map filter button for quick access
+      if (mapFilterToggle) {
+        mapFilterToggle.addEventListener('click', () => {
+          if (sidebar) {
+            sidebar.classList.toggle('visible');
+          }
+        });
+      }
+      
+      // Show/hide map filter button based on screen size
+      function updateFilterButtonVisibility() {
+        if (mapFilterToggle) {
+          if (window.innerWidth <= 768) {
+            mapFilterToggle.style.display = 'block';
+          } else {
+            mapFilterToggle.style.display = 'none';
+            // Hide sidebar on desktop
+            if (sidebar) {
+              sidebar.classList.remove('visible');
+            }
+          }
+        }
+      }
+      
+      // Initial check
+      updateFilterButtonVisibility();
+      
+      // Update on resize
+      window.addEventListener('resize', updateFilterButtonVisibility);
+
+      // Live location tracking
+      let userMarker = null;
+      let watchId = null;
+      
+      const locationBtn = document.getElementById('locationBtn');
+      const locationText = document.getElementById('locationText');
+
+      if (locationBtn && locationText) {
+        locationBtn.addEventListener('click', () => {
+          if (navigator.geolocation) {
+            locationBtn.disabled = true;
+            locationBtn.textContent = 'Enabling...';
+            locationText.textContent = 'Requesting location access...';
+
+            // Watch user position
+            watchId = navigator.geolocation.watchPosition(
+              (position) => {
+                const { latitude, longitude } = position.coords;
+                
+                if (!userMarker) {
+                  // Create user marker
+                  userMarker = L.circleMarker([latitude, longitude], {
+                    radius: 8,
+                    fillColor: '#3b82f6',
+                    color: '#ffffff',
+                    weight: 2,
+                    fillOpacity: 0.8
+                  }).addTo(map);
+
+                  // Add popup to user marker
+                  userMarker.bindPopup(`
+                    <div style="text-align: center;">
+                      <strong>Your Location</strong><br>
+                      <small>Lat: ${latitude.toFixed(6)}<br>Lng: ${longitude.toFixed(6)}</small>
+                    </div>
+                  `);
+                } else {
+                  // Update existing marker position smoothly
+                  userMarker.setLatLng([latitude, longitude]);
+                }
+
+                locationText.textContent = `Tracking active - Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`;
+                locationBtn.textContent = 'Disable Location';
+                locationBtn.disabled = false;
+              },
+              (error) => {
+                locationText.textContent = `Location error: ${error.message}`;
+                locationBtn.textContent = 'Retry';
+                locationBtn.disabled = false;
+              },
+              {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 30000
+              }
+            );
+          } else {
+            locationText.textContent = 'Geolocation not supported';
+            locationBtn.disabled = true;
+          }
+        });
+      }
+
+      // Utility functions
+      function getCategoryColor(category) {
+        const colors = {
+          'Academic': '#00C853', // academic zone (vibrant green)
+          'Admin': '#FF6D00', // administrative zone (vibrant orange)
+          'Facility': '#FF1744', // student activity zone (vibrant red)
+          'Hostel': '#2979FF', // hostel zone (vibrant blue)
+          'Sports': '#FFD600', // sports zone (vibrant yellow)
+          'Residential': '#D500F9', // residential zone (vibrant purple)
+          'Other': '#FF4081', // other buildings (vibrant pink)
+          'General': '#64FFDA', // bulk service zone (vibrant teal)
+          'Parking': '#76FF03' // parking (vibrant lime)
+        };
+        return colors[category] || colors['General'];
+      }
+      
+      function getUniqueBuildingColor(name) {
+        // Simple hash function to generate consistent colors for each building name
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+          hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        
+        // Use a large palette of vibrant, non-pink colors
+        const colorPalette = [
+          '#FF5722', // Deep Orange
+          '#FF9800', // Orange
+          '#FFC107', // Amber
+          '#FFEB3B', // Yellow
+          '#CDDC39', // Lime
+          '#8BC34A', // Light Green
+          '#4CAF50', // Green
+          '#009688', // Teal
+          '#00BCD4', // Cyan
+          '#03A9F4', // Light Blue
+          '#2196F3', // Blue
+          '#3F51B5', // Indigo
+          '#673AB7', // Deep Purple
+          '#9C27B0', // Purple
+          '#00E676', // Vibrant Green (replaced pink)
+          '#795548', // Brown
+          '#607D8B', // Blue Grey
+          '#FF9E80', // Light Orange
+          '#CDFFCC', // Light Green
+          '#B39DDB'  // Light Purple
+        ];
+        
+        // Select color based on hash
+        const index = Math.abs(hash) % colorPalette.length;
+        return colorPalette[index];
+      }
 
       function escapeHtml(str) {
-        return String(str).replace(/[&<>"]/g, s => ({
-          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'
+        return String(str).replace(/[&<>\"]/g, s => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;'
         })[s]);
       }
+
+      // Clean up status message
+      setTimeout(() => {
+        if (statusEl.parentNode) {
+          statusEl.remove();
+        }
+      }, 3000);
+
     })();
   </script>
 </body>
 </html>
-
