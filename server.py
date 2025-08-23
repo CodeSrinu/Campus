@@ -1,9 +1,11 @@
 import os
 import json
 from typing import Any, Dict, List, Optional
-from flask import Flask, jsonify, request, send_from_directory, render_template
+from flask import Flask, jsonify, request, send_from_directory, render_template, session
 from flask_cors import CORS
 from datetime import datetime
+import hashlib
+import secrets
 
 DATA_DIR = os.getenv("DATA_DIR", os.path.join(os.getcwd(), "data"))
 BOUNDARY_PATH = os.path.join(DATA_DIR, "campus_boundary.geojson")
@@ -96,6 +98,10 @@ next_event_id = 7
 # Lost & Found data
 lost_found_items = []
 next_item_id = 1
+
+# User authentication data (in-memory storage for demo)
+users = {}  # {username: {password_hash, name, email, etc.}}
+active_sessions = {}  # {session_id: {username, login_time}}
 
 # Cafeteria data and user reporting system
 cafeteria_data = {
@@ -354,14 +360,273 @@ def create_app() -> Flask:
     """Create and configure the Flask application."""
     app = Flask(__name__)
 
-    # Enable CORS for all routes (adjust origins for production as needed)
-    CORS(app, resources={r"/*": {"origins": "*"}})
+    # Configure session with a fixed secret key for development
+    app.secret_key = 'your-secret-key-for-development-change-in-production'
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    app.config['SESSION_PERMANENT'] = False
+
+    # Enable CORS for all routes with proper configuration
+    CORS(app,
+         resources={r"/api/*": {"origins": ["http://localhost:5000", "http://127.0.0.1:5000"]}},
+         supports_credentials=True,
+         allow_headers=["Content-Type", "Authorization"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+
+    # Global error handlers to ensure JSON responses
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({"success": False, "message": "Endpoint not found"}), 404
+
+    @app.errorhandler(405)
+    def method_not_allowed(error):
+        return jsonify({"success": False, "message": "Method not allowed"}), 405
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        return jsonify({"success": False, "message": "Internal server error"}), 500
+
+    # Handle preflight requests
+    @app.before_request
+    def handle_preflight():
+        if request.method == "OPTIONS":
+            response = jsonify({"status": "OK"})
+            response.headers.add("Access-Control-Allow-Origin", request.headers.get('Origin', '*'))
+            response.headers.add('Access-Control-Allow-Headers', "Content-Type,Authorization")
+            response.headers.add('Access-Control-Allow-Methods', "GET,PUT,POST,DELETE,OPTIONS")
+            response.headers.add('Access-Control-Allow-Credentials', 'true')
+            return response
 
 
 
     @app.route("/health", methods=["GET"])
     def health():
         return jsonify({"status": "Backend is running"}), 200
+
+    # -----------------------------
+    # Authentication Routes
+    # -----------------------------
+
+    def hash_password(password):
+        """Hash password using SHA-256"""
+        return hashlib.sha256(password.encode()).hexdigest()
+
+    @app.route("/api/auth/register", methods=["POST", "OPTIONS"])
+    def register():
+        """Register a new user - Always returns JSON"""
+        # Handle preflight requests
+        if request.method == "OPTIONS":
+            response = jsonify({"status": "OK"})
+            response.headers.add("Access-Control-Allow-Origin", "*")
+            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+            response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+            return response, 200
+
+        try:
+            # Ensure we're dealing with JSON content
+            if not request.is_json:
+                return jsonify({
+                    "success": False,
+                    "message": "Content-Type must be application/json"
+                }), 400
+
+            data = request.get_json(force=True)
+            print(f"Registration request received: {data}")  # Debug logging
+
+            # Validate required fields
+            required_fields = ['name', 'year', 'branch', 'password']
+            if not data or not all(key in data for key in required_fields):
+                missing_fields = [field for field in required_fields if field not in (data or {})]
+                return jsonify({
+                    "success": False,
+                    "message": f"Missing required fields: {', '.join(missing_fields)}"
+                }), 400
+
+            name = str(data['name']).strip()
+            year = str(data['year']).strip()
+            branch = str(data['branch']).strip()
+            password = str(data['password'])
+
+            # Validate field values
+            if not name or len(name) < 2:
+                return jsonify({
+                    "success": False,
+                    "message": "Name must be at least 2 characters long"
+                }), 400
+
+            if not password or len(password) < 4:
+                return jsonify({
+                    "success": False,
+                    "message": "Password must be at least 4 characters long"
+                }), 400
+
+            # Create username from name (simple approach)
+            username = name.lower().replace(' ', '_').replace('.', '_')
+
+            # Check if user already exists
+            if username in users:
+                return jsonify({
+                    "success": False,
+                    "message": f"User '{username}' already exists"
+                }), 409
+
+            # Create new user
+            users[username] = {
+                'name': name,
+                'year': year,
+                'branch': branch,
+                'password_hash': hash_password(password),
+                'created_at': datetime.now().isoformat()
+            }
+
+            # Create session
+            session['username'] = username
+            session['name'] = name
+            session['logged_in'] = True
+
+            print(f"User registered successfully: {username}")  # Debug logging
+
+            return jsonify({
+                "success": True,
+                "message": "Registration successful",
+                "user": {
+                    "username": username,
+                    "name": name,
+                    "year": year,
+                    "branch": branch
+                }
+            }), 201
+
+        except ValueError as e:
+            print(f"Registration validation error: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "Invalid data format"
+            }), 400
+        except Exception as e:
+            print(f"Registration error: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "Internal server error occurred"
+            }), 500
+
+    @app.route("/api/auth/login", methods=["POST", "OPTIONS"])
+    def login():
+        """Login user - Always returns JSON"""
+        # Handle preflight requests
+        if request.method == "OPTIONS":
+            response = jsonify({"status": "OK"})
+            response.headers.add("Access-Control-Allow-Origin", "*")
+            response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+            response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+            return response, 200
+
+        try:
+            # Ensure we're dealing with JSON content
+            if not request.is_json:
+                return jsonify({
+                    "success": False,
+                    "message": "Content-Type must be application/json"
+                }), 400
+
+            data = request.get_json(force=True)
+            print(f"Login request received: {data}")  # Debug logging
+
+            # Validate required fields
+            if not data or not all(key in data for key in ['username', 'password']):
+                return jsonify({
+                    "success": False,
+                    "message": "Username and password are required"
+                }), 400
+
+            username = str(data['username']).strip().lower().replace(' ', '_').replace('.', '_')
+            password = str(data['password'])
+
+            print(f"Attempting login for username: {username}")  # Debug logging
+            print(f"Available users: {list(users.keys())}")  # Debug logging
+
+            # Validate input
+            if not username or not password:
+                return jsonify({
+                    "success": False,
+                    "message": "Username and password cannot be empty"
+                }), 400
+
+            # Check if user exists and password is correct
+            if username in users and users[username]['password_hash'] == hash_password(password):
+                # Create session
+                session['username'] = username
+                session['name'] = users[username]['name']
+                session['logged_in'] = True
+
+                print(f"Login successful for: {username}")  # Debug logging
+
+                return jsonify({
+                    "success": True,
+                    "message": "Login successful",
+                    "user": {
+                        "username": username,
+                        "name": users[username]['name'],
+                        "year": users[username]['year'],
+                        "branch": users[username]['branch']
+                    }
+                }), 200
+            else:
+                print(f"Login failed for: {username}")  # Debug logging
+                return jsonify({
+                    "success": False,
+                    "message": "Invalid username or password"
+                }), 401
+
+        except ValueError as e:
+            print(f"Login validation error: {str(e)}")
+            return jsonify({
+                "success": False,
+                "message": "Invalid data format"
+            }), 400
+        except Exception as e:
+            print(f"Login error: {str(e)}")  # Debug logging
+            return jsonify({
+                "success": False,
+                "message": "Internal server error occurred"
+            }), 500
+
+    @app.route("/api/auth/logout", methods=["POST", "OPTIONS"])
+    def logout():
+        """Logout user"""
+        if request.method == "OPTIONS":
+            return jsonify({"status": "OK"}), 200
+
+        try:
+            print(f"Logout request for user: {session.get('username')}")  # Debug logging
+            session.clear()
+            return jsonify({"success": True, "message": "Logged out successfully"}), 200
+        except Exception as e:
+            print(f"Logout error: {str(e)}")  # Debug logging
+            return jsonify({"success": False, "message": "Internal server error"}), 500
+
+    @app.route("/api/auth/status", methods=["GET", "OPTIONS"])
+    def auth_status():
+        """Check authentication status"""
+        if request.method == "OPTIONS":
+            return jsonify({"status": "OK"}), 200
+
+        try:
+            print(f"Auth status check - Session: {dict(session)}")  # Debug logging
+            if session.get('logged_in'):
+                return jsonify({
+                    "authenticated": True,
+                    "user": {
+                        "username": session.get('username'),
+                        "name": session.get('name')
+                    }
+                }), 200
+            else:
+                return jsonify({"authenticated": False}), 200
+        except Exception as e:
+            print(f"Auth status error: {str(e)}")  # Debug logging
+            return jsonify({"authenticated": False}), 200
 
     # Home page at /
     @app.route("/", methods=["GET"])
